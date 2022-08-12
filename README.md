@@ -13,9 +13,9 @@ All the services are done using C#, .Net, SQLServer, Docker.
 UI - if will be done here - will be made with Vue probably.
 
 ## :wrench: Environment setup (fedora)
-Note: other system? Check out installation guides here [Install Docker Engine](https://docs.docker.com/engine/install/)
 
 ### :small_blue_diamond: Docker Engine
+<sub><b>Note:</b> other system? Check out installation guides here [Install Docker Engine](https://docs.docker.com/engine/install/)</sub>
 
 To get docker follow below instructions (available here: [Install Docker Engine on Fedora](https://docs.docker.com/engine/install/fedora/)):
 ```
@@ -38,6 +38,8 @@ Now you need to logout and login again to apply the group changes. Now we are go
 
 ### :small_blue_diamond: Portainer (optional)
 This is not really needed. This good if you want to have visual form of presenting and managing docker containers. 
+
+
 To install Portainer run following commands (available here: [Install Portainer with Docker on Linux](https://docs.portainer.io/v/ce-2.9/start/install/server/docker/linux)):
 ```
 docker volume create portainer_data
