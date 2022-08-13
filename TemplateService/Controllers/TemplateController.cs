@@ -13,9 +13,16 @@ public class TemplateController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet]
-    public async Task<string> Get()
+    [HttpGet("path1")]
+    public async Task<string> Get1()
     {
+        return "works!";
+    }
+
+    [HttpGet("path2")]
+    public async Task<string> Get2()
+    {
+        throw new Exception("error handler should work and you should not see a callstack");
         return "works!";
     }
 }
