@@ -50,3 +50,11 @@ Now you can got to your web browser and enter:
 https://localhost:9443
 ```
 You will be asked to create admin user name and password. 
+
+
+### :small_blue_diamond: .NET SDK
+To install .NET SDK run following command: 
+```
+sudo dnf install dotnet-sdk-6.0
+```
+If you need more information visit: [Install the .NET SDK or the .NET Runtime](https://docs.microsoft.com/en-us/dotnet/core/install/linux-fedora)
