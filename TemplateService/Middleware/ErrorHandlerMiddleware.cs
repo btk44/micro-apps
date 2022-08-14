@@ -1,7 +1,6 @@
 using System.Net;
-using Base.Core.Middleware;
 
-namespace Api.Middleware;
+namespace TemplateService.Middleware;
 
 public class ErrorHandlerMiddleware
 {

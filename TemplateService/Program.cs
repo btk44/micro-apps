@@ -1,4 +1,4 @@
-using Api.Middleware;
+using TemplateService.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
  
-namespace Base.Core.Middleware;
+namespace TemplateService.Middleware;
 
 public class ErrorDetails
 {
