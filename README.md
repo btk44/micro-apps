@@ -21,6 +21,11 @@ sudo dnf install dotnet-sdk-6.0
 ```
 If you need more information visit: [Install the .NET SDK or the .NET Runtime](https://docs.microsoft.com/en-us/dotnet/core/install/linux-fedora)
 
+Note that if you start with a clean environment you will probably need to install some VS Code extentions, like `Nuget Package Manager` and tools like `dotnet-ef`. You will be notified during setup / development in output window if somethink is missing. 
+
+Links:
+[Entity Framework Core tools reference - .NET Core CLI](https://docs.microsoft.com/en-us/ef/core/cli/dotnet)
+
 ### :small_blue_diamond: Docker Engine
 <sub><b>Note:</b> other system? Check out installation guides here [Install Docker Engine](https://docs.docker.com/engine/install/)</sub>
 
