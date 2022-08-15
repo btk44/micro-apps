@@ -17,7 +17,7 @@ cd SqlServer/
 docker-compose up -d
 ```
 
-Now if there was no errors you should be able to connect to your container using this credentials:
+Now if there were no errors you should be able to connect to your container using this credentials:
 ```
 server: localhost
 port: 1433
