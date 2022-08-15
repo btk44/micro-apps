@@ -46,7 +46,7 @@ Now you need to logout and login again to apply the group changes. Now we are go
 
 <b>The last thing is to create a custom bridge network for our apps to communicate with each other. Run command:</b>
 ```
-docker network create --driver=bridge vpn-network
+docker network create --driver=bridge services-network
 ```
 
 ### :small_blue_diamond: Portainer (optional)
