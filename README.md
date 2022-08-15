@@ -1,6 +1,6 @@
 # micro-apps
 This will be a set of minimal applications that can be used to construct bigger projects. It is some kind of microservice structure where all apps are loosely coupled and can be used in any other project.
-
+ 
 The project will contain:
 * docker compose files for each service
 * account service - for creating accounts and indentity providing
@@ -13,6 +13,13 @@ All the services are done using C#, .Net, SQLServer, Docker.
 UI - if will be done here - will be made with Vue probably.
 
 ## :wrench: Environment setup (fedora)
+
+### :small_blue_diamond: .NET SDK
+To install .NET SDK run following command: 
+```
+sudo dnf install dotnet-sdk-6.0 
+```
+If you need more information visit: [Install the .NET SDK or the .NET Runtime](https://docs.microsoft.com/en-us/dotnet/core/install/linux-fedora)
 
 ### :small_blue_diamond: Docker Engine
 <sub><b>Note:</b> other system? Check out installation guides here [Install Docker Engine](https://docs.docker.com/engine/install/)</sub>
@@ -36,6 +43,12 @@ sudo usermod -aG docker YOUR_USERNAME (you can get it by running 'whoami' comman
 ```
 Now you need to logout and login again to apply the group changes. Now we are good to go.
 
+
+<b>The last thing is to create a custom bridge network for our apps to communicate with each other. Run command:</b>
+```
+docker network create --driver=bridge vpn-network
+```
+
 ### :small_blue_diamond: Portainer (optional)
 This is not really needed. This good if you want to have visual form of presenting and managing docker containers. 
 
@@ -50,11 +63,3 @@ Now you can got to your web browser and enter:
 https://localhost:9443
 ```
 You will be asked to create admin user name and password. 
-
-
-### :small_blue_diamond: .NET SDK
-To install .NET SDK run following command: 
-```
-sudo dnf install dotnet-sdk-6.0
-```
-If you need more information visit: [Install the .NET SDK or the .NET Runtime](https://docs.microsoft.com/en-us/dotnet/core/install/linux-fedora)
