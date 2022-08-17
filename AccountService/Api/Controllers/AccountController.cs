@@ -13,16 +13,45 @@ public class AccountController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet("path1")]
-    public async Task<string> Get1()
+    [HttpPost("register")]
+    public async Task<string> Register()
     {
         return "works!";
     }
 
-    [HttpGet("path2")]
-    public async Task<string> Get2()
+    [HttpPost("login")]
+    public async Task<string> Login()
     {
-        throw new Exception("error handler should work and you should not see a callstack");
-        return "works!";
+        throw new Exception("not implemented");
+    }
+
+    [HttpPost("refreshToken")]
+    public async Task<string> RefreshToken()
+    {
+        throw new Exception("not implemented");
+    }
+
+    [HttpDelete("delete")]
+    public async Task<string> Delete()
+    {
+        throw new Exception("not implemented");
+    }
+
+    [HttpPut("update")]
+    public async Task<string> Update()
+    {
+        throw new Exception("not implemented");
+    }
+
+    [HttpPost("resetPasswordRequest")]
+    public async Task<string> ResetPasswordRequest()
+    {
+        throw new Exception("not implemented");
+    }
+
+    [HttpPost("resetPassword")]
+    public async Task<string> ResetPassword()
+    {
+        throw new Exception("not implemented");
     }
 }
