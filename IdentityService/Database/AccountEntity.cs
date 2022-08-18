@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AccountService.Database;
+namespace IdentityService.Database;
 
 [Table("Account")]
 public class AccountEntity: BaseEntity {

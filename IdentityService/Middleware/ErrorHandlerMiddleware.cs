@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace AccountService.Middleware;
+namespace IdentityService.Middleware;
 
 public class ErrorHandlerMiddleware
 {

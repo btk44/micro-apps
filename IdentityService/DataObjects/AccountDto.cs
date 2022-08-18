@@ -1,4 +1,4 @@
-namespace AccountService.DataObjects;
+namespace IdentityService.DataObjects;
 
 public class AccountDto {
     public int Id { get; set; }

@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
  
-namespace AccountService.Middleware;
+namespace IdentityService.Middleware;
 
 public class ErrorDetails
 {

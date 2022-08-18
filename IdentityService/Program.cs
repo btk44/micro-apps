@@ -1,5 +1,5 @@
-using AccountService.Database;
-using AccountService.Middleware;
+using IdentityService.Database;
+using IdentityService.Middleware;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
