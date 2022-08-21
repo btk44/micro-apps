@@ -19,15 +19,14 @@ public class ErrorHandlerMiddleware
         {
             await _next(httpContext);
         }
-        // catch custom exceptions here
-        // catch (CustomException aex){
-        //     _logger.LogError(aex.ToString());
-        //     await HandleExceptionAsync(httpContext, HttpStatusCode.BadRequest, aex.Message);
-        // }
+        catch (AppException aex){
+            _logger.LogError(aex.ToString());
+            await HandleExceptionAsync(httpContext, HttpStatusCode.BadRequest, aex.Message);
+        }
         catch (Exception ex)
         {
             _logger.LogError($"Something went wrong: {ex}");
-            await HandleExceptionAsync(httpContext, HttpStatusCode.InternalServerError);
+            await HandleExceptionAsync(httpContext, HttpStatusCode.InternalServerError, "Something went wrong");
         }
     }
 
