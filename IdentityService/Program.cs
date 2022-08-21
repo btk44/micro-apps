@@ -32,6 +32,6 @@ app.UseAuthorization();
 app.MapControllers();
 app.UseMiddleware<ErrorHandlerMiddleware>();
 
-DbPopulation.PopulateWithTestData(app);
+DbDataPopulation.PopulateWithData(app);
 
 app.Run();

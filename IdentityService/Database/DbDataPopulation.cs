@@ -1,19 +1,22 @@
+using IdentityService.Database.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace IdentityService.Database;
 
-public static class DbPopulation{
-    public static void PopulateWithTestData(IApplicationBuilder app){
+public static class DbDataPopulation{
+    public static void PopulateWithData(IApplicationBuilder app){
         using (var serviceScope = app.ApplicationServices.CreateScope()){
             InsertData(serviceScope.ServiceProvider.GetService<DatabaseContext>());
         }
     }
 
-    private static void InsertData(DatabaseContext context){
-        if(!context.Accounts.Any()){
+    private static void InsertData(DatabaseContext dbContext){
+        if(!dbContext.Accounts.Any()){
+            Console.WriteLine("=== Inserting sample data ===");
+
             var passwordHasher = new PasswordHasher<string>();
 
-            context.Accounts.AddRange(
+            dbContext.Accounts.AddRange(
                 new AccountEntity(){
                     Email = "joe@test.com",
                     Password = passwordHasher.HashPassword("joe@test.com", "joe")
@@ -24,7 +27,10 @@ public static class DbPopulation{
                 }
             );
 
-            context.SaveChanges();
+            dbContext.SaveChanges();
+            return;
         }
+
+        Console.WriteLine("=== Data already inserted ===");
     }
 }
