@@ -31,8 +31,7 @@ public class AccountController : ControllerBase
     public async Task<TokenData> Login([FromBody] LoginCredentials credentials)
     {
         if(string.IsNullOrEmpty(credentials.Email) || string.IsNullOrEmpty(credentials.Password)){
-            throw new AppException("Invalid email or password", 401);
-            // insert failed attempt if email exists
+            throw new AppException("Empty email or password", 400);
         }
 
         var account = await _dbContext.Accounts
