@@ -1,5 +1,4 @@
 using IdentityService.Database;
-using IdentityService.Middleware;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,7 +29,6 @@ app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();
-app.UseMiddleware<ErrorHandlerMiddleware>();
 
 DbDataPopulation.PopulateWithData(app);
 
