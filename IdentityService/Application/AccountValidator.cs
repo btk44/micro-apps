@@ -53,6 +53,11 @@ public class AccountValidator {
         return _passwordHasher.VerifyHashedPassword(account.Email, account.Password, providedPassword) == PasswordVerificationResult.Success;
     }
 
+    public bool IsPasswordSecure(string password){
+        // to do: consider adding password policy to make it more secure
+        return true;
+    }
+
     public bool IsAccountBlocked(AccountEntity account){
         if(account.FailedAuthInfo == null){
             return false;

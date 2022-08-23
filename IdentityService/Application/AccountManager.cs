@@ -1,6 +1,8 @@
 using IdentityService.Common;
 using IdentityService.Database;
+using IdentityService.Database.Entities;
 using IdentityService.DataObjects;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace IdentityService.Application;
@@ -8,14 +10,16 @@ namespace IdentityService.Application;
 public class AccountManager {
     private DatabaseContext _dbContext;
     private AccountValidator _accountValidator;
+    private PasswordHasher<string> _passwordHasher;
 
     public AccountManager(DatabaseContext dbContext)
     {
         _dbContext = dbContext;
         _accountValidator = new AccountValidator();
+        _passwordHasher = new PasswordHasher<string>();
     }
 
-    public  async Task<Result<TokenDataDto>> Login(LoginCredentialsDto credentials){
+    public async Task<Result<TokenDataDto>> Login(LoginCredentialsDto credentials){
 
         if(!_accountValidator.IsDataProvided(credentials.Email, credentials.Password)){
             return new Result<TokenDataDto>(new AppException("Empty email or password"));
@@ -34,16 +38,60 @@ public class AccountManager {
         }
 
         if(_accountValidator.IsAccountBlocked(account))  {
-            // change last attempt and counter values and save
+            await UpdateFailedAuthAttempt(account, true);
             return new Result<TokenDataDto>(new AppException("Account is blocked, try again in 5 minutes"));
         }     
         
-        // password policy?
         if(!_accountValidator.IsPasswordValid(account, credentials.Password)){
-            // update failed attempt on email
+            await UpdateFailedAuthAttempt(account, true);
             return new Result<TokenDataDto>(new AppException("Invalid email or password"));
         }
 
+        await UpdateFailedAuthAttempt(account, false);
         return new Result<TokenDataDto>(new TokenDataDto());
+    }
+
+    public async Task<Result<AccountDto>> Register(AccountDto accountDto){
+        if(!_accountValidator.IsDataProvided(accountDto.Email, accountDto.Password)){
+            return new Result<AccountDto>(new AppException("Empty email or password"));
+        }
+
+        if(!_accountValidator.IsEmailValid(accountDto.Email)){
+            return new Result<AccountDto>(new AppException("Incorrect email format"));
+        }
+
+        if(!_accountValidator.IsPasswordSecure(accountDto.Password)){
+            return new Result<AccountDto>(new AppException("Password does not fulfill requirements: [to do]"));
+        }
+
+        if(await _dbContext.Accounts.AnyAsync(x => x.Active && x.Email == accountDto.Email)){
+            return new Result<AccountDto>(new AppException("Account with this email already exists"));
+        };
+
+        var accountEntity = new AccountEntity(){
+            Email = accountDto.Email,
+            Password = _passwordHasher.HashPassword(accountDto.Email, accountDto.Password)
+        };
+
+        _dbContext.Accounts.Add(accountEntity);      
+
+        if(await _dbContext.SaveChangesAsync() <= 0){
+            return new Result<AccountDto>(new AppException("Save error - please try again"));
+        }
+
+        // map back to dto
+
+        return new Result<AccountDto>(new AccountDto());
+    }
+
+    private async Task UpdateFailedAuthAttempt(AccountEntity account, bool isFail){
+        if (account.FailedAuthInfo == null){
+            account.FailedAuthInfo = new FailedAuthInfoEntity();
+        }
+
+        account.FailedAuthInfo.FailureCounter = isFail ? account.FailedAuthInfo.FailureCounter+1 : 0;
+        account.FailedAuthInfo.LastAttempt = DateTime.Now;
+
+        await _dbContext.SaveChangesAsync();
     }
 }

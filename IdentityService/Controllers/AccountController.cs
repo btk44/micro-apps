@@ -21,9 +21,13 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<string> Register()
+    public async Task<IActionResult> Register([FromBody] AccountDto account)
     {
-        return "works!";
+        var result = await _accountManager.Register(account);
+        return result.Match<IActionResult>(
+            account => Ok(account),
+            exception => BadRequest(exception.Message)
+        );
     }
 
     [HttpPost("login")]
