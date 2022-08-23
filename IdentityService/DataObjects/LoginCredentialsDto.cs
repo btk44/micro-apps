@@ -1,8 +1,6 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace IdentityService.DataObjects;
 
-public class LoginCredentials{
+public class LoginCredentialsDto{
     public string Email { get; set; }
     public string Password { get; set; }
 }
