@@ -32,7 +32,7 @@ public class AccountController : ControllerBase
         var result = await _accountManager.Login(credentials);
         return result.Match<IActionResult>(
             tokenData => Ok(tokenData),
-            exception => BadRequest(exception.Message)
+            exception => Unauthorized(exception.Message)
         ); 
     }
 
