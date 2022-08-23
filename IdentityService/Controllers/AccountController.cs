@@ -1,8 +1,7 @@
+using IdentityService.Application;
 using IdentityService.Database;
 using IdentityService.DataObjects;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace IdentityService.Controllers;
 
@@ -12,14 +11,13 @@ public class AccountController : ControllerBase
 {
     private readonly ILogger<AccountController> _logger;
     private readonly DatabaseContext _dbContext;
-    private readonly AccountLogic _accountLogic;
-    private readonly PasswordHasher<string> _passwordHasher;
+    private readonly AccountManager _accountManager;
 
     public AccountController(ILogger<AccountController> logger, DatabaseContext dbContext)
     {
         _logger = logger;
         _dbContext = dbContext;
-        _accountLogic = new AccountLogic(dbContext);
+        _accountManager = new AccountManager(dbContext);
     }
 
     [HttpPost("register")]
@@ -29,9 +27,9 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginCredentials credentials)
+    public async Task<IActionResult> Login([FromBody] LoginCredentialsDto credentials)
     {
-        var result = await _accountLogic.Login(credentials);
+        var result = await _accountManager.Login(credentials);
         return result.Match<IActionResult>(
             tokenData => Ok(tokenData),
             exception => BadRequest(exception.Message)
