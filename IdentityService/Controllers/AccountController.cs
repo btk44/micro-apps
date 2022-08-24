@@ -1,4 +1,6 @@
+using AutoMapper;
 using IdentityService.Application;
+using IdentityService.Application.Mappers;
 using IdentityService.Database;
 using IdentityService.DataObjects;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +15,12 @@ public class AccountController : ControllerBase
     private readonly DatabaseContext _dbContext;
     private readonly AccountManager _accountManager;
 
-    public AccountController(ILogger<AccountController> logger, DatabaseContext dbContext)
+    public AccountController(ILogger<AccountController> logger, DatabaseContext dbContext,
+        IMapper mapper)
     {
         _logger = logger;
         _dbContext = dbContext;
-        _accountManager = new AccountManager(dbContext);
+        _accountManager = new AccountManager(dbContext, mapper);
     }
 
     [HttpPost("register")]
@@ -40,6 +43,7 @@ public class AccountController : ControllerBase
         ); 
     }
 
+    /*
     [HttpPost("refreshToken")]
     public async Task<string> RefreshToken()
     {
@@ -69,4 +73,5 @@ public class AccountController : ControllerBase
     {
         throw new Exception("not implemented");
     }
+    */
 }

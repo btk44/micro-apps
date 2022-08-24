@@ -1,3 +1,5 @@
+using AutoMapper;
+using IdentityService.Application.Mappers;
 using IdentityService.Common;
 using IdentityService.Database;
 using IdentityService.Database.Entities;
@@ -11,12 +13,14 @@ public class AccountManager {
     private DatabaseContext _dbContext;
     private AccountValidator _accountValidator;
     private PasswordHasher<string> _passwordHasher;
+    private IMapper _accountMapper;
 
-    public AccountManager(DatabaseContext dbContext)
+    public AccountManager(DatabaseContext dbContext, IMapper accountMapper)
     {
         _dbContext = dbContext;
         _accountValidator = new AccountValidator();
         _passwordHasher = new PasswordHasher<string>();
+        _accountMapper = accountMapper;
     }
 
     public async Task<Result<TokenDataDto>> Login(LoginCredentialsDto credentials){
@@ -79,9 +83,9 @@ public class AccountManager {
             return new Result<AccountDto>(new AppException("Save error - please try again"));
         }
 
-        // map back to dto
+        accountDto = _accountMapper.Map<AccountDto>(accountEntity);
 
-        return new Result<AccountDto>(new AccountDto());
+        return new Result<AccountDto>(accountDto);
     }
 
     private async Task UpdateFailedAuthAttempt(AccountEntity account, bool isFail){
