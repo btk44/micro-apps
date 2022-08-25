@@ -3,63 +3,32 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace IdentityService.Migrations
+namespace IdentityService.Infrastructure.Migrations
 {
-    public partial class RefershToken : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<int>(
-                name: "ModifiedBy",
-                table: "Account",
-                type: "int",
-                nullable: false,
-                defaultValue: -1,
-                oldClrType: typeof(int),
-                oldType: "int");
-
-            migrationBuilder.AlterColumn<DateTime>(
-                name: "Modified",
-                table: "Account",
-                type: "datetime2",
-                nullable: false,
-                defaultValueSql: "getdate()",
-                oldClrType: typeof(DateTime),
-                oldType: "datetime2");
-
-            migrationBuilder.AlterColumn<int>(
-                name: "CreatedBy",
-                table: "Account",
-                type: "int",
-                nullable: false,
-                defaultValue: -1,
-                oldClrType: typeof(int),
-                oldType: "int");
-
-            migrationBuilder.AlterColumn<DateTime>(
-                name: "Created",
-                table: "Account",
-                type: "datetime2",
-                nullable: false,
-                defaultValueSql: "getdate()",
-                oldClrType: typeof(DateTime),
-                oldType: "datetime2");
-
-            migrationBuilder.AlterColumn<bool>(
-                name: "Active",
-                table: "Account",
-                type: "bit",
-                nullable: false,
-                defaultValue: true,
-                oldClrType: typeof(bool),
-                oldType: "bit");
-
-            migrationBuilder.AddColumn<int>(
-                name: "FailedAuthInfoId",
-                table: "Account",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
+            migrationBuilder.CreateTable(
+                name: "Account",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FailedAuthInfoId = table.Column<int>(type: "int", nullable: false),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    CreatedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
+                    Modified = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
+                    Active = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Account", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "FailedAuthInfo",
@@ -75,7 +44,7 @@ namespace IdentityService.Migrations
                     Modified = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
                     ModifiedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
                     Active = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -94,7 +63,7 @@ namespace IdentityService.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Token = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ExpiresAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     AccountId = table.Column<int>(type: "int", nullable: false),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
@@ -102,7 +71,7 @@ namespace IdentityService.Migrations
                     Modified = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
                     ModifiedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
                     Active = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -135,54 +104,8 @@ namespace IdentityService.Migrations
             migrationBuilder.DropTable(
                 name: "RefreshToken");
 
-            migrationBuilder.DropColumn(
-                name: "FailedAuthInfoId",
-                table: "Account");
-
-            migrationBuilder.AlterColumn<int>(
-                name: "ModifiedBy",
-                table: "Account",
-                type: "int",
-                nullable: false,
-                oldClrType: typeof(int),
-                oldType: "int",
-                oldDefaultValue: -1);
-
-            migrationBuilder.AlterColumn<DateTime>(
-                name: "Modified",
-                table: "Account",
-                type: "datetime2",
-                nullable: false,
-                oldClrType: typeof(DateTime),
-                oldType: "datetime2",
-                oldDefaultValueSql: "getdate()");
-
-            migrationBuilder.AlterColumn<int>(
-                name: "CreatedBy",
-                table: "Account",
-                type: "int",
-                nullable: false,
-                oldClrType: typeof(int),
-                oldType: "int",
-                oldDefaultValue: -1);
-
-            migrationBuilder.AlterColumn<DateTime>(
-                name: "Created",
-                table: "Account",
-                type: "datetime2",
-                nullable: false,
-                oldClrType: typeof(DateTime),
-                oldType: "datetime2",
-                oldDefaultValueSql: "getdate()");
-
-            migrationBuilder.AlterColumn<bool>(
-                name: "Active",
-                table: "Account",
-                type: "bit",
-                nullable: false,
-                oldClrType: typeof(bool),
-                oldType: "bit",
-                oldDefaultValue: true);
+            migrationBuilder.DropTable(
+                name: "Account");
         }
     }
 }

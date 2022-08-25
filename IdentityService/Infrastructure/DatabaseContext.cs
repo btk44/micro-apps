@@ -1,8 +1,10 @@
-using IdentityService.Database.Entities;
+
+using IdentityService.Domain.Common;
+using IdentityService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace IdentityService.Database;
+namespace IdentityService.Infrastructure;
 public class DatabaseContext : DbContext{
     public DatabaseContext(DbContextOptions<DatabaseContext> options): base(options){ }
     public DbSet<AccountEntity> Accounts { get; set;} 

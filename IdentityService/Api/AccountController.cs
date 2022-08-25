@@ -1,11 +1,10 @@
 using AutoMapper;
-using IdentityService.Application;
-using IdentityService.Application.Mappers;
-using IdentityService.Database;
-using IdentityService.DataObjects;
+using IdentityService.Infrastructure;
+using IdentityService.Application.Dtos;
 using Microsoft.AspNetCore.Mvc;
+using IdentityService.Application;
 
-namespace IdentityService.Controllers;
+namespace IdentityService.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]

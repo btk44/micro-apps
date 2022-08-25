@@ -1,6 +1,6 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
-using IdentityService.Database.Entities;
+using IdentityService.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace IdentityService.Application;

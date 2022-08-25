@@ -1,7 +1,8 @@
-using IdentityService.Database.Entities;
+
+using IdentityService.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 
-namespace IdentityService.Database;
+namespace IdentityService.Infrastructure;
 
 public static class DbDataPopulation{
     public static void PopulateWithData(IApplicationBuilder app){

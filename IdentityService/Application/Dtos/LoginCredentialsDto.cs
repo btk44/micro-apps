@@ -1,4 +1,4 @@
-namespace IdentityService.DataObjects;
+namespace IdentityService.Application.Dtos;
 
 public class LoginCredentialsDto{
     public string Email { get; set; }

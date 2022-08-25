@@ -1,6 +1,6 @@
 using AutoMapper;
-using IdentityService.Database.Entities;
-using IdentityService.DataObjects;
+using IdentityService.Application.Dtos;
+using IdentityService.Domain.Entities;
 
 namespace IdentityService.Application.Mappers;
 

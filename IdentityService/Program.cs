@@ -1,4 +1,4 @@
-using IdentityService.Database;
+using IdentityService.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

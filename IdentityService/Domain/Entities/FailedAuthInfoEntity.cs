@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using IdentityService.Domain.Common;
 
-namespace IdentityService.Database.Entities;
+namespace IdentityService.Domain.Entities;
 
 [Table("FailedAuthInfo")]
 public class FailedAuthInfoEntity : BaseEntity {
