@@ -1,4 +1,4 @@
-namespace IdentityService.Common;
+namespace IdentityService.Application.Common;
 
 public readonly struct Result<V> {
     internal readonly bool IsSuccess;

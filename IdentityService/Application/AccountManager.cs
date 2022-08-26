@@ -1,10 +1,11 @@
 using AutoMapper;
-using IdentityService.Common;
+using IdentityService.Application.Common;
 using IdentityService.Application.Dtos;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using IdentityService.Domain.Entities;
 using IdentityService.Application.Interfaces;
+using IdentityService.Application.Exceptions;
 
 namespace IdentityService.Application;
 
