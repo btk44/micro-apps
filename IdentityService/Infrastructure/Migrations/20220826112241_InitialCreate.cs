@@ -10,7 +10,7 @@ namespace IdentityService.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Account",
+                name: "Accounts",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -22,16 +22,15 @@ namespace IdentityService.Infrastructure.Migrations
                     CreatedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
                     Modified = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
                     ModifiedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
-                    Active = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true)
+                    Active = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Account", x => x.Id);
+                    table.PrimaryKey("PK_Accounts", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "FailedAuthInfo",
+                name: "FailedAuthInfos",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -43,22 +42,21 @@ namespace IdentityService.Infrastructure.Migrations
                     CreatedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
                     Modified = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
                     ModifiedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
-                    Active = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true)
+                    Active = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FailedAuthInfo", x => x.Id);
+                    table.PrimaryKey("PK_FailedAuthInfos", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_FailedAuthInfo_Account_AccountId",
+                        name: "FK_FailedAuthInfos_Accounts_AccountId",
                         column: x => x.AccountId,
-                        principalTable: "Account",
+                        principalTable: "Accounts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "RefreshToken",
+                name: "RefreshTokens",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -70,42 +68,41 @@ namespace IdentityService.Infrastructure.Migrations
                     CreatedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
                     Modified = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
                     ModifiedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
-                    Active = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
-                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true)
+                    Active = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RefreshToken", x => x.Id);
+                    table.PrimaryKey("PK_RefreshTokens", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RefreshToken_Account_AccountId",
+                        name: "FK_RefreshTokens_Accounts_AccountId",
                         column: x => x.AccountId,
-                        principalTable: "Account",
+                        principalTable: "Accounts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_FailedAuthInfo_AccountId",
-                table: "FailedAuthInfo",
+                name: "IX_FailedAuthInfos_AccountId",
+                table: "FailedAuthInfos",
                 column: "AccountId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_RefreshToken_AccountId",
-                table: "RefreshToken",
+                name: "IX_RefreshTokens_AccountId",
+                table: "RefreshTokens",
                 column: "AccountId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "FailedAuthInfo");
+                name: "FailedAuthInfos");
 
             migrationBuilder.DropTable(
-                name: "RefreshToken");
+                name: "RefreshTokens");
 
             migrationBuilder.DropTable(
-                name: "Account");
+                name: "Accounts");
         }
     }
 }

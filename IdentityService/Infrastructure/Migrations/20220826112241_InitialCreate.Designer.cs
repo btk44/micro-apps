@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace IdentityService.Infrastructure.Migrations
 {
-    [DbContext(typeof(DatabaseContext))]
-    [Migration("20220824185112_InitialCreate")]
+    [DbContext(typeof(ApplicationDbContext))]
+    [Migration("20220826112241_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,7 +24,7 @@ namespace IdentityService.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("IdentityService.Entities.AccountEntity", b =>
+            modelBuilder.Entity("IdentityService.Domain.Entities.AccountEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -66,17 +66,12 @@ namespace IdentityService.Infrastructure.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
                     b.HasKey("Id");
 
-                    b.ToTable("Account");
+                    b.ToTable("Accounts");
                 });
 
-            modelBuilder.Entity("IdentityService.Entities.FailedAuthInfoEntity", b =>
+            modelBuilder.Entity("IdentityService.Domain.Entities.FailedAuthInfoEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -118,20 +113,15 @@ namespace IdentityService.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(-1);
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId")
                         .IsUnique();
 
-                    b.ToTable("FailedAuthInfo");
+                    b.ToTable("FailedAuthInfos");
                 });
 
-            modelBuilder.Entity("IdentityService.Entities.RefreshTokenEntity", b =>
+            modelBuilder.Entity("IdentityService.Domain.Entities.RefreshTokenEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -170,11 +160,6 @@ namespace IdentityService.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(-1);
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
                     b.Property<string>("Token")
                         .HasColumnType("nvarchar(max)");
 
@@ -182,23 +167,23 @@ namespace IdentityService.Infrastructure.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("RefreshToken");
+                    b.ToTable("RefreshTokens");
                 });
 
-            modelBuilder.Entity("IdentityService.Entities.FailedAuthInfoEntity", b =>
+            modelBuilder.Entity("IdentityService.Domain.Entities.FailedAuthInfoEntity", b =>
                 {
-                    b.HasOne("IdentityService.Entities.AccountEntity", "Account")
+                    b.HasOne("IdentityService.Domain.Entities.AccountEntity", "Account")
                         .WithOne("FailedAuthInfo")
-                        .HasForeignKey("IdentityService.Entities.FailedAuthInfoEntity", "AccountId")
+                        .HasForeignKey("IdentityService.Domain.Entities.FailedAuthInfoEntity", "AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Account");
                 });
 
-            modelBuilder.Entity("IdentityService.Entities.RefreshTokenEntity", b =>
+            modelBuilder.Entity("IdentityService.Domain.Entities.RefreshTokenEntity", b =>
                 {
-                    b.HasOne("IdentityService.Entities.AccountEntity", "Account")
+                    b.HasOne("IdentityService.Domain.Entities.AccountEntity", "Account")
                         .WithMany("RefreshTokens")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -207,7 +192,7 @@ namespace IdentityService.Infrastructure.Migrations
                     b.Navigation("Account");
                 });
 
-            modelBuilder.Entity("IdentityService.Entities.AccountEntity", b =>
+            modelBuilder.Entity("IdentityService.Domain.Entities.AccountEntity", b =>
                 {
                     b.Navigation("FailedAuthInfo");
 

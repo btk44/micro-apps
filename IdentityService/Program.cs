@@ -1,13 +1,10 @@
+using IdentityService.Application;
 using IdentityService.Infrastructure;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<DatabaseContext>(options => 
-    options.UseSqlServer(builder.Configuration["ConnectionStrings:DefaultConnection"])
-);
-
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddInfrastructureServices(builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -22,16 +19,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-using(var scope = app.Services.CreateScope()){
-    var authContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
-    authContext.Database.Migrate();
-}
-
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();
 
-DbDataPopulation.PopulateWithData(app);
+using(var scope = app.Services.CreateScope()){
+    var dbContextInitialiser = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitialiser>();
+    await dbContextInitialiser.Migrate();
+}
 
 app.Run();

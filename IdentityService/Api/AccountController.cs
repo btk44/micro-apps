@@ -1,8 +1,8 @@
 using AutoMapper;
-using IdentityService.Infrastructure;
 using IdentityService.Application.Dtos;
 using Microsoft.AspNetCore.Mvc;
 using IdentityService.Application;
+using IdentityService.Application.Interfaces;
 
 namespace IdentityService.Api.Controllers;
 
@@ -11,10 +11,10 @@ namespace IdentityService.Api.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly ILogger<AccountController> _logger;
-    private readonly DatabaseContext _dbContext;
+    private readonly IApplicationDbContext _dbContext;
     private readonly AccountManager _accountManager;
 
-    public AccountController(ILogger<AccountController> logger, DatabaseContext dbContext,
+    public AccountController(ILogger<AccountController> logger, IApplicationDbContext dbContext,
         IMapper mapper)
     {
         _logger = logger;

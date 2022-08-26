@@ -1,23 +1,30 @@
 
 using IdentityService.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace IdentityService.Infrastructure;
 
-public static class DbDataPopulation{
-    public static void PopulateWithData(IApplicationBuilder app){
-        using (var serviceScope = app.ApplicationServices.CreateScope()){
-            InsertData(serviceScope.ServiceProvider.GetService<DatabaseContext>());
-        }
+public class ApplicationDbContextInitialiser{
+    private ApplicationDbContext _dbContext;
+
+    public ApplicationDbContextInitialiser(ApplicationDbContext dbContext)
+    {
+        _dbContext = dbContext;
     }
 
-    private static void InsertData(DatabaseContext dbContext){
-        if(!dbContext.Accounts.Any()){
+    public async Task Migrate(){
+        await _dbContext.Database.MigrateAsync();
+        await InsertData();  // remove it later?
+    }
+
+    private async Task InsertData(){
+        if(!_dbContext.Accounts.Any()){
             Console.WriteLine("=== Inserting sample data ===");
 
             var passwordHasher = new PasswordHasher<string>();
 
-            dbContext.Accounts.AddRange(
+            _dbContext.Accounts.AddRange(
                 new AccountEntity(){
                     Email = "joe@test.com",
                     Password = passwordHasher.HashPassword("joe@test.com", "joe")
@@ -28,7 +35,7 @@ public static class DbDataPopulation{
                 }
             );
 
-            dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
             return;
         }
 

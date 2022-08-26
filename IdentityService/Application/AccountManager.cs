@@ -1,20 +1,20 @@
 using AutoMapper;
 using IdentityService.Common;
-using IdentityService.Infrastructure;
 using IdentityService.Application.Dtos;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using IdentityService.Domain.Entities;
+using IdentityService.Application.Interfaces;
 
 namespace IdentityService.Application;
 
 public class AccountManager {
-    private DatabaseContext _dbContext;
+    private IApplicationDbContext _dbContext;
     private AccountValidator _accountValidator;
     private PasswordHasher<string> _passwordHasher;
     private IMapper _accountMapper;
 
-    public AccountManager(DatabaseContext dbContext, IMapper accountMapper)
+    public AccountManager(IApplicationDbContext dbContext, IMapper accountMapper)
     {
         _dbContext = dbContext;
         _accountValidator = new AccountValidator();

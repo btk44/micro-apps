@@ -1,12 +1,13 @@
 
+using IdentityService.Application.Interfaces;
 using IdentityService.Domain.Common;
 using IdentityService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace IdentityService.Infrastructure;
-public class DatabaseContext : DbContext{
-    public DatabaseContext(DbContextOptions<DatabaseContext> options): base(options){ }
+public class ApplicationDbContext : DbContext, IApplicationDbContext{
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options): base(options){ }
     public DbSet<AccountEntity> Accounts { get; set;} 
     public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
     public DbSet<FailedAuthInfoEntity> FailedAuthInfos { get; set; }
@@ -31,4 +32,6 @@ public class DatabaseContext : DbContext{
         entity.Property(e => e.Modified).IsRequired().HasDefaultValueSql("getdate()").ValueGeneratedOnAddOrUpdate();
         entity.Property(e => e.ModifiedBy).IsRequired().HasDefaultValue(-1);
     }
+
+    
 }
