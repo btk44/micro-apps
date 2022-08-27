@@ -27,7 +27,7 @@ public class CreateAccountCommandHandler {
         _accountMapper = accountMapper; // consider moving mapping into Dto file?
     }
 
-    public async Task<Result<AccountDto>> Handle(CreateAccountCommand command, CancellationToken cancellationToken){
+    public async Task<Result<AccountDto>> Handle(CreateAccountCommand command, CancellationToken cancellationToken = default){
                 if(!_accountValidator.IsDataProvided(command.Email, command.Password)){
             return new Result<AccountDto>(new AppException("Empty email or password"));
         }

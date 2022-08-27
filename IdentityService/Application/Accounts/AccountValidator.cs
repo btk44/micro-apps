@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using IdentityService.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 
-namespace IdentityService.Application;
+namespace IdentityService.Application.Accounts;
 
 public class AccountValidator {
     private PasswordHasher<string> _passwordHasher;
