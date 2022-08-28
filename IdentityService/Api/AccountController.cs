@@ -24,10 +24,10 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] AccountDto account)
+    public async Task<IActionResult> Register([FromBody] CreateAccountCommand command)
     {
         var createAccountHandler = new CreateAccountCommandHandler(_dbContext, _mapper); // to do: this is not the way we want it
-        var result = await createAccountHandler.Handle(new CreateAccountCommand() { Email = account.Email, Password = account.Password });
+        var result = await createAccountHandler.Handle(command);
         return result.Match<IActionResult>(
             account => Ok(account),
             exception => BadRequest(exception.Message)
@@ -35,10 +35,10 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginCredentialsDto credentials)
+    public async Task<IActionResult> Login([FromBody] LoginCommand command)
     {
         var loginHandler = new LoginCommandHandler(_dbContext);
-        var result = await loginHandler.Handle(new LoginCommand(){ Email = credentials.Email, Password = credentials.Password });
+        var result = await loginHandler.Handle(command);
         return result.Match<IActionResult>(
             tokenData => Ok(tokenData),
             exception => Unauthorized(exception.Message)
