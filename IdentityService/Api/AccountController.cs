@@ -1,8 +1,9 @@
 using AutoMapper;
 using IdentityService.Application.Dtos;
 using Microsoft.AspNetCore.Mvc;
-using IdentityService.Application;
 using IdentityService.Application.Interfaces;
+using IdentityService.Application.Accounts;
+using IdentityService.Application.Authorization;
 
 namespace IdentityService.Api.Controllers;
 
@@ -12,20 +13,21 @@ public class AccountController : ControllerBase
 {
     private readonly ILogger<AccountController> _logger;
     private readonly IApplicationDbContext _dbContext;
-    private readonly AccountManager _accountManager;
+    private readonly IMapper _mapper;
 
     public AccountController(ILogger<AccountController> logger, IApplicationDbContext dbContext,
         IMapper mapper)
     {
         _logger = logger;
         _dbContext = dbContext;
-        _accountManager = new AccountManager(dbContext, mapper);
+        _mapper = mapper;
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] AccountDto account)
+    public async Task<IActionResult> Register([FromBody] CreateAccountCommand command)
     {
-        var result = await _accountManager.Register(account);
+        var createAccountHandler = new CreateAccountCommandHandler(_dbContext, _mapper); // to do: this is not the way we want it
+        var result = await createAccountHandler.Handle(command);
         return result.Match<IActionResult>(
             account => Ok(account),
             exception => BadRequest(exception.Message)
@@ -33,9 +35,10 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginCredentialsDto credentials)
+    public async Task<IActionResult> Login([FromBody] LoginCommand command)
     {
-        var result = await _accountManager.Login(credentials);
+        var loginHandler = new LoginCommandHandler(_dbContext);
+        var result = await loginHandler.Handle(command);
         return result.Match<IActionResult>(
             tokenData => Ok(tokenData),
             exception => Unauthorized(exception.Message)

@@ -1,17 +1,12 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 using IdentityService.Domain.Entities;
-using Microsoft.AspNetCore.Identity;
 
-namespace IdentityService.Application;
+namespace IdentityService.Application.Accounts;
 
 public class AccountValidator {
-    private PasswordHasher<string> _passwordHasher;
 
-    public AccountValidator()
-    {
-        _passwordHasher = new PasswordHasher<string>();
-    }
+    public AccountValidator(){ }
 
     public bool IsDataProvided(string email, string password){
         return !string.IsNullOrEmpty(email) && 
@@ -47,10 +42,6 @@ public class AccountValidator {
         {
             return false;
         }
-    }
-
-    public bool IsPasswordValid(AccountEntity account, string providedPassword){
-        return _passwordHasher.VerifyHashedPassword(account.Email, account.Password, providedPassword) == PasswordVerificationResult.Success;
     }
 
     public bool IsPasswordSecure(string password){
