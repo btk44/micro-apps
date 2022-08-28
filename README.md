@@ -1,5 +1,10 @@
 # micro-apps
 This will be a set of minimal applications that can be used to construct bigger projects. It is some kind of microservice structure where all apps are loosely coupled and can be used in any other project.
+
+The architecture of each service is inspired by Clean Architecture (by Jason Taylor). It may seem overengireered but it is done to make the services more customizable for different use cases. Key agruments:
+* code will be ready to be used not only for web api but also for service bus communication
+* Api, Application, Domain, Infrastructure can be easily moved to separate projects (like in Clean Architecture)
+* ... tbc
  
 The project will contain:
 * docker compose files for each service
