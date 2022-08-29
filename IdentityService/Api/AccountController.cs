@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using IdentityService.Application.Accounts;
-using IdentityService.Application.Dtos;
+using IdentityService.Application.Common.Models;
 
 namespace IdentityService.Api;
 

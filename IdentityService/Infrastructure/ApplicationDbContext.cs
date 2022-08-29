@@ -1,5 +1,5 @@
 
-using IdentityService.Application.Interfaces;
+using IdentityService.Application.Common.Interfaces;
 using IdentityService.Domain.Common;
 using IdentityService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;

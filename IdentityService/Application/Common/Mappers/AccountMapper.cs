@@ -1,8 +1,8 @@
 using AutoMapper;
-using IdentityService.Application.Dtos;
+using IdentityService.Application.Common.Models;
 using IdentityService.Domain.Entities;
 
-namespace IdentityService.Application.Mappers;
+namespace IdentityService.Application.Common.Mappers;
 
 public class AccountMapper: Profile {
     public AccountMapper()

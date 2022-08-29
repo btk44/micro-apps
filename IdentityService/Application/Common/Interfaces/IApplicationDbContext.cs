@@ -1,7 +1,7 @@
 using IdentityService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace IdentityService.Application.Interfaces;
+namespace IdentityService.Application.Common.Interfaces;
 
 public interface IApplicationDbContext{
     public DbSet<AccountEntity> Accounts { get; } 

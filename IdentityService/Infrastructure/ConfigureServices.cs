@@ -1,4 +1,4 @@
-using IdentityService.Application.Interfaces;
+using IdentityService.Application.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace IdentityService.Infrastructure;

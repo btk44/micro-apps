@@ -1,4 +1,4 @@
-namespace IdentityService.Application.Exceptions;
+namespace IdentityService.Application.Common.Exceptions;
 
 [Serializable]
 public class AppException: Exception

@@ -1,4 +1,4 @@
-namespace IdentityService.Application.Dtos;
+namespace IdentityService.Application.Common.Models;
 
 public class TokenDataDto{
     public string Token { get; set; } 

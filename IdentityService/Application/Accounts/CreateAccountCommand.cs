@@ -1,8 +1,8 @@
 using AutoMapper;
 using IdentityService.Application.Common;
-using IdentityService.Application.Dtos;
-using IdentityService.Application.Exceptions;
-using IdentityService.Application.Interfaces;
+using IdentityService.Application.Common.Exceptions;
+using IdentityService.Application.Common.Interfaces;
+using IdentityService.Application.Common.Models;
 using IdentityService.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
