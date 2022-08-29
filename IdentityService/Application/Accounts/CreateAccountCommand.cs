@@ -1,5 +1,5 @@
 using AutoMapper;
-using IdentityService.Application.Common;
+using IdentityService.Application.Common.Tools;
 using IdentityService.Application.Common.Exceptions;
 using IdentityService.Application.Common.Interfaces;
 using IdentityService.Application.Common.Models;
