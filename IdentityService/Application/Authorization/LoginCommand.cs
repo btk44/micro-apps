@@ -3,16 +3,17 @@ using IdentityService.Application.Dtos;
 using IdentityService.Application.Exceptions;
 using IdentityService.Application.Interfaces;
 using IdentityService.Domain.Entities;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace IdentityService.Application.Authorization;
 
-public class LoginCommand {
+public class LoginCommand: IRequest<Result<TokenDataDto>> {
     public string Email { get; set; }
     public string Password { get; set; }
 }
 
-public class LoginCommandHandler {
+public class LoginCommandHandler: IRequestHandler<LoginCommand, Result<TokenDataDto>> {
     private IApplicationDbContext _dbContext;
     private AuthValidator _authValidator;
 
@@ -21,7 +22,7 @@ public class LoginCommandHandler {
         _authValidator = new AuthValidator();
     }
 
-    public async Task<Result<TokenDataDto>> Handle(LoginCommand command, CancellationToken cancellationToken = default){
+    public async Task<Result<TokenDataDto>> Handle(LoginCommand command, CancellationToken cancellationToken){
         var account = await _dbContext.Accounts
                                 .Include(x => x.FailedAuthInfo)
                                 .FirstOrDefaultAsync(x => x.Active && x.Email == command.Email);
@@ -44,7 +45,7 @@ public class LoginCommandHandler {
         return new Result<TokenDataDto>(new TokenDataDto());
     }
 
-        private async Task UpdateFailedAuthAttempt(AccountEntity account, bool isFail){
+    private async Task UpdateFailedAuthAttempt(AccountEntity account, bool isFail){  // to do: move it swhere else
         if (account.FailedAuthInfo == null){
             account.FailedAuthInfo = new FailedAuthInfoEntity();
         }

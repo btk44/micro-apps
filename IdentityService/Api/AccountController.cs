@@ -1,65 +1,32 @@
-using AutoMapper;
-using IdentityService.Application.Dtos;
 using Microsoft.AspNetCore.Mvc;
-using IdentityService.Application.Interfaces;
 using IdentityService.Application.Accounts;
-using IdentityService.Application.Authorization;
+using IdentityService.Application.Dtos;
 
-namespace IdentityService.Api.Controllers;
+namespace IdentityService.Api;
 
 [ApiController]
-[Route("[controller]")]
-public class AccountController : ControllerBase
+public class AccountController : ApiControllerBase
 {
-    private readonly ILogger<AccountController> _logger;
-    private readonly IApplicationDbContext _dbContext;
-    private readonly IMapper _mapper;
-
-    public AccountController(ILogger<AccountController> logger, IApplicationDbContext dbContext,
-        IMapper mapper)
-    {
-        _logger = logger;
-        _dbContext = dbContext;
-        _mapper = mapper;
-    }
-
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] CreateAccountCommand command)
+    public async Task<ActionResult<AccountDto>> Create([FromBody] CreateAccountCommand command)
     {
-        var createAccountHandler = new CreateAccountCommandHandler(_dbContext, _mapper); // to do: this is not the way we want it
-        var result = await createAccountHandler.Handle(command);
-        return result.Match<IActionResult>(
+        var result = await Mediator.Send(command);
+        return result.Match<ActionResult>(
             account => Ok(account),
             exception => BadRequest(exception.Message)
         );
     }
 
-    [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginCommand command)
-    {
-        var loginHandler = new LoginCommandHandler(_dbContext);
-        var result = await loginHandler.Handle(command);
-        return result.Match<IActionResult>(
-            tokenData => Ok(tokenData),
-            exception => Unauthorized(exception.Message)
-        ); 
-    }
-
     /*
-    [HttpPost("refreshToken")]
-    public async Task<string> RefreshToken()
+
+    [HttpPut("update")]
+    public async Task<string> Update()
     {
         throw new Exception("not implemented");
     }
 
     [HttpDelete("delete")]
     public async Task<string> Delete()
-    {
-        throw new Exception("not implemented");
-    }
-
-    [HttpPut("update")]
-    public async Task<string> Update()
     {
         throw new Exception("not implemented");
     }

@@ -4,17 +4,18 @@ using IdentityService.Application.Dtos;
 using IdentityService.Application.Exceptions;
 using IdentityService.Application.Interfaces;
 using IdentityService.Domain.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace IdentityService.Application.Accounts;
 
-public class CreateAccountCommand {
+public class CreateAccountCommand: IRequest<Result<AccountDto>> {
     public string Email { get; set; }
     public string Password { get; set; }
 }
 
-public class CreateAccountCommandHandler {
+public class CreateAccountCommandHandler: IRequestHandler<CreateAccountCommand, Result<AccountDto>> {
     private IApplicationDbContext _dbContext;
     private AccountValidator _accountValidator;
     private PasswordHasher<string> _passwordHasher;
@@ -27,7 +28,7 @@ public class CreateAccountCommandHandler {
         _accountMapper = accountMapper; // consider moving mapping into Dto file?
     }
 
-    public async Task<Result<AccountDto>> Handle(CreateAccountCommand command, CancellationToken cancellationToken = default){
+    public async Task<Result<AccountDto>> Handle(CreateAccountCommand command, CancellationToken cancellationToken){
                 if(!_accountValidator.IsDataProvided(command.Email, command.Password)){
             return new Result<AccountDto>(new AppException("Empty email or password"));
         }
