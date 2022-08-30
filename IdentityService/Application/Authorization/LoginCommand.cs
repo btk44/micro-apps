@@ -5,6 +5,7 @@ using IdentityService.Application.Common.Models;
 using IdentityService.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using IdentityService.Application.Common.Constants;
 
 namespace IdentityService.Application.Authorization;
 
@@ -16,10 +17,12 @@ public class LoginCommand: IRequest<Result<TokenDataDto>> {
 public class LoginCommandHandler: IRequestHandler<LoginCommand, Result<TokenDataDto>> {
     private IApplicationDbContext _dbContext;
     private AuthValidator _authValidator;
+    private ITokenService _tokenService;
 
-    public LoginCommandHandler(IApplicationDbContext dbContext){
+    public LoginCommandHandler(IApplicationDbContext dbContext, ITokenService tokenService){
         _dbContext = dbContext;
         _authValidator = new AuthValidator();
+        _tokenService = tokenService;
     }
 
     public async Task<Result<TokenDataDto>> Handle(LoginCommand command, CancellationToken cancellationToken){
@@ -42,7 +45,15 @@ public class LoginCommandHandler: IRequestHandler<LoginCommand, Result<TokenData
         }
 
         await UpdateFailedAuthAttempt(account, false);
-        return new Result<TokenDataDto>(new TokenDataDto());
+
+        var claims = new Dictionary<string, string>() {
+            { Claims.UserName, account.Email },
+            { Claims.UserId, account.Id.ToString() }
+        };
+
+        // save refresh token
+        
+        return new Result<TokenDataDto>(_tokenService.CreateTokenData(claims));
     }
 
     private async Task UpdateFailedAuthAttempt(AccountEntity account, bool isFail){  // to do: move it swhere else
