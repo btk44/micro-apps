@@ -1,3 +1,4 @@
+using IdentityService.Api.Middleware;
 using IdentityService.Application;
 using IdentityService.Infrastructure;
 
@@ -22,7 +23,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 app.UseAuthorization();
+app.UseAuthentication();
 app.MapControllers();
+app.UseMiddleware<ErrorHandlerMiddleware>();
 
 using(var scope = app.Services.CreateScope()){
     var dbContextInitialiser = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitialiser>();

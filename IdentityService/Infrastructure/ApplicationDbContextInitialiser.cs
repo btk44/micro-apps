@@ -15,7 +15,7 @@ public class ApplicationDbContextInitialiser{
 
     public async Task Migrate(){
         await _dbContext.Database.MigrateAsync();
-        await InsertData();  // remove it later?
+        await InsertData();  // to do: remove it later?
     }
 
     private async Task InsertData(){

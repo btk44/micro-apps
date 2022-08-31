@@ -1,6 +1,7 @@
 using System.Text;
 using IdentityService.Application.Common.Interfaces;
 using IdentityService.Application.Common.Services;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -8,6 +9,7 @@ namespace IdentityService.Application;
 
 public static class ConfigureServices {
     public static void AddApplicationServices(this IServiceCollection services, IConfiguration configuration){
+        services.AddMediatR(System.Reflection.Assembly.GetExecutingAssembly());
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         services.AddTransient<ITokenService, TokenService>(s => new TokenService(configuration));
         
