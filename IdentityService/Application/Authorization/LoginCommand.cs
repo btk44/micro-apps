@@ -51,9 +51,15 @@ public class LoginCommandHandler: IRequestHandler<LoginCommand, Result<TokenData
             { Claims.UserId, account.Id.ToString() }
         };
 
-        // save refresh token
+        var tokenData = _tokenService.CreateTokenData(claims);
+
+        _dbContext.RefreshTokens.Add(new RefreshTokenEntity(){
+            Token = tokenData.RefreshToken,
+            ExpiresAt = tokenData.ExpirationTime
+        });
+        await _dbContext.SaveChangesAsync();
         
-        return new Result<TokenDataDto>(_tokenService.CreateTokenData(claims));
+        return new Result<TokenDataDto>(tokenData);
     }
 
     private async Task UpdateFailedAuthAttempt(AccountEntity account, bool isFail){  // to do: move it swhere else

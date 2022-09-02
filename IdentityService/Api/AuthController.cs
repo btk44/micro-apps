@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using IdentityService.Application.Authorization;
 using IdentityService.Application.Common.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace IdentityService.Api;
 
@@ -17,6 +18,7 @@ public class AuthController : ApiControllerBase
         ); 
     }
 
+    [Authorize]
     [HttpPost("refreshToken")]
     public async Task<ActionResult<TokenDataDto>> RefreshToken([FromBody] RefreshTokenCommand command)
     {
