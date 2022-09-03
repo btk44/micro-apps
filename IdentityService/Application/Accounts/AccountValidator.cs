@@ -55,7 +55,7 @@ public class AccountValidator {
         }
 
         if (account.FailedAuthInfo.FailureCounter > 5){
-            if(account.FailedAuthInfo.LastAttempt.AddMinutes(5) > DateTime.Now){
+            if(account.FailedAuthInfo.LastAttempt.AddMinutes(5) > DateTime.UtcNow){
                 return true;
             }
         }

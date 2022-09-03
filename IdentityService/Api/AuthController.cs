@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using IdentityService.Application.Authorization;
 using IdentityService.Application.Common.Models;
 using Microsoft.AspNetCore.Authorization;
+using IdentityService.Application.Common.Constants;
 
 namespace IdentityService.Api;
 
@@ -20,8 +21,12 @@ public class AuthController : ApiControllerBase
 
     [Authorize]
     [HttpPost("refreshToken")]
-    public async Task<ActionResult<TokenDataDto>> RefreshToken([FromBody] RefreshTokenCommand command)
+    public async Task<ActionResult<TokenDataDto>> RefreshToken([FromBody] string refreshToken)
     {
+        var command = new RefreshTokenCommand() { 
+            RefreshToken = refreshToken,
+            UserId = Convert.ToInt32(TokenService.GetClaimFromToken(User, Claims.UserId))
+        };
         var result = await Mediator.Send(command);
         return result.Match<ActionResult>(
             tokenData => Ok(tokenData),

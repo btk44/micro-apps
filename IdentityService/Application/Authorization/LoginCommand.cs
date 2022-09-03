@@ -18,33 +18,36 @@ public class LoginCommandHandler: IRequestHandler<LoginCommand, Result<TokenData
     private IApplicationDbContext _dbContext;
     private AuthValidator _authValidator;
     private ITokenService _tokenService;
+    private AuthHelper _authHelper;
 
     public LoginCommandHandler(IApplicationDbContext dbContext, ITokenService tokenService){
         _dbContext = dbContext;
         _authValidator = new AuthValidator();
         _tokenService = tokenService;
+        _authHelper = new AuthHelper(dbContext);
     }
 
     public async Task<Result<TokenDataDto>> Handle(LoginCommand command, CancellationToken cancellationToken){
         var account = await _dbContext.Accounts
                                 .Include(x => x.FailedAuthInfo)
+                                .Include(x => x.RefreshTokens)
                                 .FirstOrDefaultAsync(x => x.Active && x.Email == command.Email);
 
         if(account == null){
-            return new Result<TokenDataDto>(new AppException("Invalid email or password"));
+            return new Result<TokenDataDto>(new AuthException("Invalid email or password"));
         }
 
         if(_authValidator.IsAccountBlocked(account))  {
-            await UpdateFailedAuthAttempt(account, true);
-            return new Result<TokenDataDto>(new AppException("Account is blocked, try again in 5 minutes"));
+            await _authHelper.UpdateFailedAuthAttemptAndSave(account, true);
+            return new Result<TokenDataDto>(new AuthException("Account is blocked, try again in 5 minutes"));
         }     
         
         if(!_authValidator.IsPasswordValid(account, command.Password)){
-            await UpdateFailedAuthAttempt(account, true);
-            return new Result<TokenDataDto>(new AppException("Invalid email or password"));
+            await _authHelper.UpdateFailedAuthAttemptAndSave(account, true);
+            return new Result<TokenDataDto>(new AuthException("Invalid email or password"));
         }
 
-        await UpdateFailedAuthAttempt(account, false);
+        _authHelper.UpdateFailedAuthAttempt(account, false);
 
         var claims = new Dictionary<string, string>() {
             { Claims.UserName, account.Email },
@@ -53,23 +56,15 @@ public class LoginCommandHandler: IRequestHandler<LoginCommand, Result<TokenData
 
         var tokenData = _tokenService.CreateTokenData(claims);
 
-        _dbContext.RefreshTokens.Add(new RefreshTokenEntity(){
+        account.RefreshTokens.Add(new RefreshTokenEntity(){
             Token = tokenData.RefreshToken,
             ExpiresAt = tokenData.ExpirationTime
         });
+
+        _authHelper.CleanupOldTokens(account);
+
         await _dbContext.SaveChangesAsync();
         
         return new Result<TokenDataDto>(tokenData);
-    }
-
-    private async Task UpdateFailedAuthAttempt(AccountEntity account, bool isFail){  // to do: move it swhere else
-        if (account.FailedAuthInfo == null){
-            account.FailedAuthInfo = new FailedAuthInfoEntity();
-        }
-
-        account.FailedAuthInfo.FailureCounter = isFail ? account.FailedAuthInfo.FailureCounter+1 : 0;
-        account.FailedAuthInfo.LastAttempt = DateTime.Now;
-
-        await _dbContext.SaveChangesAsync();
     }
 }

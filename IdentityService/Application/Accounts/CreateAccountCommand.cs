@@ -30,19 +30,19 @@ public class CreateAccountCommandHandler: IRequestHandler<CreateAccountCommand, 
 
     public async Task<Result<AccountDto>> Handle(CreateAccountCommand command, CancellationToken cancellationToken){
                 if(!_accountValidator.IsDataProvided(command.Email, command.Password)){
-            return new Result<AccountDto>(new AppException("Empty email or password"));
+            return new Result<AccountDto>(new AccountValidationException("Empty email or password"));
         }
 
         if(!_accountValidator.IsEmailValid(command.Email)){
-            return new Result<AccountDto>(new AppException("Incorrect email format"));
+            return new Result<AccountDto>(new AccountValidationException("Incorrect email format"));
         }
 
         if(!_accountValidator.IsPasswordSecure(command.Password)){
-            return new Result<AccountDto>(new AppException("Password does not fulfill requirements: [to do]"));
+            return new Result<AccountDto>(new AccountValidationException("Password does not fulfill requirements: [to do]"));
         }
 
         if(await _dbContext.Accounts.AnyAsync(x => x.Active && x.Email == command.Email)){
-            return new Result<AccountDto>(new AppException("Account with this email already exists"));
+            return new Result<AccountDto>(new AccountValidationException("Account with this email already exists"));
         };
 
         var accountEntity = new AccountEntity(){
@@ -53,7 +53,7 @@ public class CreateAccountCommandHandler: IRequestHandler<CreateAccountCommand, 
         _dbContext.Accounts.Add(accountEntity);      
 
         if(await _dbContext.SaveChangesAsync() <= 0){
-            return new Result<AccountDto>(new AppException("Save error - please try again"));
+            return new Result<AccountDto>(new AccountValidationException("Save error - please try again"));
         }
 
         var dto = _accountMapper.Map<AccountDto>(accountEntity);
