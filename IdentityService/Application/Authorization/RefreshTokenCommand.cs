@@ -42,6 +42,11 @@ public class RefreshTokenCommandHandler: IRequestHandler<RefreshTokenCommand, Re
             return new Result<TokenDataDto>(new AuthException("account does not exist"));
         }
 
+        if(_authValidator.IsAccountBlocked(account))  {
+            await _authHelper.UpdateFailedAuthAttemptAndSave(account, true);
+            return new Result<TokenDataDto>(new AuthException("Account is blocked, try again in 5 minutes"));
+        }     
+
         var oldRefreshToken = account.RefreshTokens.FirstOrDefault(x => x.Active && x.Token == command.RefreshToken);
 
         if(oldRefreshToken == null || oldRefreshToken.ExpiresAt < DateTime.UtcNow){
