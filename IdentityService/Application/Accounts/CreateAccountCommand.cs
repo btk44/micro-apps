@@ -29,7 +29,7 @@ public class CreateAccountCommandHandler: IRequestHandler<CreateAccountCommand, 
     }
 
     public async Task<Result<AccountDto>> Handle(CreateAccountCommand command, CancellationToken cancellationToken){
-                if(!_accountValidator.IsDataProvided(command.Email, command.Password)){
+        if(!_accountValidator.IsDataProvided(command.Email, command.Password)){
             return new Result<AccountDto>(new AccountValidationException("Empty email or password"));
         }
 

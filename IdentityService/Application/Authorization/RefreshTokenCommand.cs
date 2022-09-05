@@ -11,7 +11,7 @@ namespace IdentityService.Application.Authorization;
 
 public class RefreshTokenCommand: IRequest<Result<TokenDataDto>> {
     public string RefreshToken { get; set; }
-    public int UserId { get; set; } 
+    public int AccountId { get; set; } 
 }
 
 public class RefreshTokenCommandHandler: IRequestHandler<RefreshTokenCommand, Result<TokenDataDto>> {
@@ -29,17 +29,17 @@ public class RefreshTokenCommandHandler: IRequestHandler<RefreshTokenCommand, Re
 
     public async Task<Result<TokenDataDto>> Handle(RefreshTokenCommand command, CancellationToken cancellationToken){
         if (string.IsNullOrEmpty(command.RefreshToken)){
-            return new Result<TokenDataDto>(new AuthException("no token provided"));
+            return new Result<TokenDataDto>(new AuthException("No token provided"));
         }
 
         var account = await _dbContext.Accounts
             .Include(x => x.FailedAuthInfo)
             .Include(x => x.RefreshTokens)
-            .FirstOrDefaultAsync(x => x.Active && x.Id == command.UserId);
+            .FirstOrDefaultAsync(x => x.Active && x.Id == command.AccountId);
 
         if(account == null){
             await _authHelper.UpdateFailedAuthAttemptAndSave(account, true);
-            return new Result<TokenDataDto>(new AuthException("account does not exist"));
+            return new Result<TokenDataDto>(new AuthException("Account does not exist"));
         }
 
         if(_authValidator.IsAccountBlocked(account))  {
@@ -51,7 +51,7 @@ public class RefreshTokenCommandHandler: IRequestHandler<RefreshTokenCommand, Re
 
         if(oldRefreshToken == null || oldRefreshToken.ExpiresAt < DateTime.UtcNow){
             await _authHelper.UpdateFailedAuthAttemptAndSave(account, true);
-            return new Result<TokenDataDto>(new AuthException("token is invalid"));
+            return new Result<TokenDataDto>(new AuthException("Token is invalid"));
         }
 
         // do not reset failed attempts here - only in login
