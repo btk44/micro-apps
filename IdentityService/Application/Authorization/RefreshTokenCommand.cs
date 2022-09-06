@@ -57,8 +57,7 @@ public class RefreshTokenCommandHandler: IRequestHandler<RefreshTokenCommand, Re
         // do not reset failed attempts here - only in login
 
         var claims = new Dictionary<string, string>() {
-            { Claims.UserName, account.Email },
-            { Claims.UserId, account.Id.ToString() }
+            { Claims.AccountId, account.Id.ToString() }
         };
         var tokenData = _tokenService.CreateTokenData(claims);
 

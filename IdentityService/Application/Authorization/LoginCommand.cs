@@ -50,8 +50,7 @@ public class LoginCommandHandler: IRequestHandler<LoginCommand, Result<TokenData
         _authHelper.UpdateFailedAuthAttempt(account, false);
 
         var claims = new Dictionary<string, string>() {
-            { Claims.UserName, account.Email },
-            { Claims.UserId, account.Id.ToString() }
+            { Claims.AccountId, account.Id.ToString() }
         };
 
         var tokenData = _tokenService.CreateTokenData(claims);
