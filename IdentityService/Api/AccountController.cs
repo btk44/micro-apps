@@ -31,8 +31,9 @@ public class AccountController : ApiControllerBase
         );
     }
 
+    [Authorize]
     [HttpDelete("delete")]
-    public async Task<ActionResult<bool>> Delete([FromBody] int accountId)
+    public async Task<ActionResult<bool>> Delete([FromQuery] int accountId)
     {
         var tokenAccountId = Convert.ToInt32(TokenService.GetClaimFromToken(User, Claims.AccountId));
         if(tokenAccountId != accountId){
@@ -46,17 +47,25 @@ public class AccountController : ApiControllerBase
         );
     }
 
-    /*
-    [HttpPost("resetPasswordRequest")]
-    public async Task<string> ResetPasswordRequest()
+    
+    [HttpPost("reset-password-request")]
+    public async Task<ActionResult<bool>> ResetPasswordRequest([FromBody] string email)
     {
-        throw new Exception("not implemented");
+        var result = await Mediator.Send(new ResetPasswordRequestCommand(){ Email = email });
+        return result.Match<ActionResult>(
+            success => Ok(),
+            exception => BadRequest(exception.Message)
+        );
     }
-
-    [HttpPost("resetPassword")]
-    public async Task<string> ResetPassword()
+    
+    [HttpPost("reset-password")]
+    public async Task<ActionResult<bool>> ResetPassword([FromBody] ResetPasswordCommand command)
     {
-        throw new Exception("not implemented");
+        var result = await Mediator.Send(command);
+        return result.Match<ActionResult>(
+            success => Ok(),
+            exception => BadRequest(exception.Message)
+        );
     }
-    */
+    
 }

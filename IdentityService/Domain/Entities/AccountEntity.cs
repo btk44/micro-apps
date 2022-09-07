@@ -10,4 +10,5 @@ public class AccountEntity: BaseEntity {
     public int FailedAuthInfoId { get; set; }
     public FailedAuthInfoEntity FailedAuthInfo { get; set; }
     public List<RefreshTokenEntity> RefreshTokens { get; set; }
+    public List<ResetPasswordTokenEntity> ResetPasswordTokens { get; set; }
 }

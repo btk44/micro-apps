@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 public class DeleteAccountCommand: IRequest<Result<bool>> {
+    // for now we can remove only our account
     public int AccountId { get; set; }
 }
 

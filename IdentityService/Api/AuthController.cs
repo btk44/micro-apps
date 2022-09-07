@@ -20,7 +20,7 @@ public class AuthController : ApiControllerBase
     }
 
     [Authorize]
-    [HttpPost("refreshToken")]
+    [HttpPost("refresh-token")]
     public async Task<ActionResult<TokenDataDto>> RefreshToken([FromBody] string refreshToken)
     {
         var command = new RefreshTokenCommand() { 

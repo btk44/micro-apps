@@ -18,8 +18,10 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext{
         BaseBuilder(modelBuilder.Entity<AccountEntity>());
         BaseBuilder(modelBuilder.Entity<RefreshTokenEntity>());
         BaseBuilder(modelBuilder.Entity<FailedAuthInfoEntity>());
+        BaseBuilder(modelBuilder.Entity<ResetPasswordTokenEntity>());
 
         modelBuilder.Entity<AccountEntity>().HasMany(x => x.RefreshTokens).WithOne(x => x.Account);        
+        modelBuilder.Entity<AccountEntity>().HasMany(x => x.ResetPasswordTokens).WithOne(x => x.Account);        
         modelBuilder.Entity<AccountEntity>().HasOne(x => x.FailedAuthInfo).WithOne(x => x.Account).HasForeignKey<FailedAuthInfoEntity>(x=>x.AccountId);        
     }
 

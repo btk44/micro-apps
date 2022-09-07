@@ -33,12 +33,12 @@ private IConfiguration _configuration;
         return new TokenDataDto(){
             Token = new JwtSecurityTokenHandler().WriteToken(jwt),
             ExpirationTime = issueTime.AddSeconds(int.Parse(_configuration["Auth:AccessTokenExpirationTimeInSec"])),
-            RefreshToken = GenerateRefreshToken(),
+            RefreshToken = GenerateSimpleToken(),
             RefreshExpirationTime = issueTime.AddSeconds(int.Parse(_configuration["Auth:RefreshTokenExpirationTimeInSec"]))
         };
     }
 
-    public string GenerateRefreshToken()
+    public string GenerateSimpleToken()
     {
         var randomNumber = new byte[32];
         using (var rng = RandomNumberGenerator.Create()){
