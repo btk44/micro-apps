@@ -19,6 +19,16 @@ public readonly struct Result<V> {
         Value = default(V);
     }
 
+    public static implicit operator Result<V>(V value)
+    {
+        return new Result<V>(value);
+    }
+
+	public static implicit operator Result<V>(Exception ex)
+	{
+		return new Result<V>(ex);
+	}
+
     public T Match<T>(Func<V, T> valueFn, Func<Exception, T> exceptionFn){
         return IsSuccess ? valueFn(Value) : exceptionFn(Exception);
     }

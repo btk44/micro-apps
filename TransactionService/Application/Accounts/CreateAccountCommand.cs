@@ -28,9 +28,9 @@ public class CreateAccountCommandHandler: IRequestHandler<CreateAccountCommand, 
         var currency = await _dbContext.Currencies.FirstOrDefaultAsync(x => x.Active && x.Id == command.CurrencyId);
 
         if (currency == null){
-            return new Result<AccountDto>(new Exception("Unsupported currency"));
+            return new Exception("Unsupported currency");
         }
 
-        return new Result<AccountDto>(new AccountDto());
+        return new AccountDto();
     }
 }
