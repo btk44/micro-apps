@@ -7,8 +7,9 @@ using TransactionService.Application.Common.Tools;
 namespace TransactionService.Application.Accounts;
 
 public class CreateAccountCommand: IRequest<Result<AccountDto>> {
-    public string Email { get; set; }
-    public string Password { get; set; }
+    public int OwnerId { get; set; }
+    public string Name { get; set; }
+    public int CurrencyId { get; set; }
 }
 
 public class CreateAccountCommandHandler: IRequestHandler<CreateAccountCommand, Result<AccountDto>> {
@@ -23,6 +24,8 @@ public class CreateAccountCommandHandler: IRequestHandler<CreateAccountCommand, 
     }
 
     public async Task<Result<AccountDto>> Handle(CreateAccountCommand command, CancellationToken cancellationToken){
+
+
         return new Result<AccountDto>(new AccountDto());
     }
 }

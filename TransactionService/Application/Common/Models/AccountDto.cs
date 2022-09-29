@@ -1,6 +1,7 @@
 namespace TransactionService.Application.Common.Models;
 
 public class AccountDto {
+    public int OwnerId { get; set; }
     public int Id { get; set; }
     public string Name { get; set; }
     public double Amount { get; set; }
