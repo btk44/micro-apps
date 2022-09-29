@@ -1,5 +1,6 @@
 using AutoMapper;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using TransactionService.Application.Common.Interfaces;
 using TransactionService.Application.Common.Models;
 using TransactionService.Application.Common.Tools;
@@ -24,7 +25,11 @@ public class CreateAccountCommandHandler: IRequestHandler<CreateAccountCommand, 
     }
 
     public async Task<Result<AccountDto>> Handle(CreateAccountCommand command, CancellationToken cancellationToken){
+        var currency = await _dbContext.Currencies.FirstOrDefaultAsync(x => x.Active && x.Id == command.CurrencyId);
 
+        if (currency == null){
+            return new Result<AccountDto>(new Exception("Unsupported currency"));
+        }
 
         return new Result<AccountDto>(new AccountDto());
     }
