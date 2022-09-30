@@ -9,24 +9,23 @@ using TransactionService.Domain.Entities;
 
 namespace TransactionService.Application.Accounts;
 
-public class CreateAccountCommand: IRequest<Result<AccountDto>> {
+public class UpdateAccountCommand: IRequest<Result<bool>> {
     public int OwnerId { get; set; }
+    public int Id { get; set; }
     public string Name { get; set; }
     public int CurrencyId { get; set; }
 }
 
-public class CreateAccountCommandHandler: IRequestHandler<CreateAccountCommand, Result<AccountDto>> {
+public class UpdateAccountCommandHandler: IRequestHandler<UpdateAccountCommand, Result<bool>> {
     private IApplicationDbContext _dbContext;
     private AccountValidator _accountValidator;
-    private IMapper _accountMapper;
 
-    public CreateAccountCommandHandler(IApplicationDbContext dbContext, IMapper accountMapper){
+    public UpdateAccountCommandHandler(IApplicationDbContext dbContext){
         _dbContext = dbContext;
         _accountValidator = new AccountValidator();
-        _accountMapper = accountMapper; // consider moving mapping into Dto file?
     }
 
-    public async Task<Result<AccountDto>> Handle(CreateAccountCommand command, CancellationToken cancellationToken){
+    public async Task<Result<bool>> Handle(UpdateAccountCommand command, CancellationToken cancellationToken){
         if(!_accountValidator.IsNameValid(command.Name)){
             return new AccountValidationException("Incorrect account name");
         }
@@ -37,12 +36,14 @@ public class CreateAccountCommandHandler: IRequestHandler<CreateAccountCommand, 
             return new AccountValidationException("Unsupported currency");
         }
 
-        var accountEntity = new AccountEntity(){
-            Name = command.Name,
-            Amount = 0,
-            OwnerId = command.OwnerId,
-            CurrencyId = command.CurrencyId
-        };
+        var accountEntity = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.Active && x.OwnerId == command.OwnerId && x.Id == command.Id);
+
+        if(accountEntity == null){
+            return new AccountValidationException("Account does not exist");
+        }
+
+        accountEntity.Name = command.Name;
+        accountEntity.CurrencyId = command.CurrencyId;
 
         _dbContext.Accounts.Add(accountEntity);      
 
@@ -50,8 +51,6 @@ public class CreateAccountCommandHandler: IRequestHandler<CreateAccountCommand, 
             return new AccountValidationException("Save error - please try again");
         }
 
-        var dto = _accountMapper.Map<AccountDto>(accountEntity);
-
-        return dto;
+        return true;
     }
 }

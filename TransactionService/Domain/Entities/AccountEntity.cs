@@ -6,5 +6,5 @@ public class AccountEntity: BaseEntity {
     public int OwnerId { get; set; }
     public double Amount { get; set; }
     public string Name { get; set; }
-    public string CurrencyId { get; set; }
+    public int CurrencyId { get; set; }
 }
