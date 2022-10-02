@@ -29,6 +29,10 @@ public class UpdateAccountCommandHandler: IRequestHandler<UpdateAccountCommand, 
         if(!_accountValidator.IsNameValid(command.Name)){
             return new AccountValidationException("Incorrect account name");
         }
+
+        if(command.OwnerId <= 0){
+            return new AccountValidationException("Incorrect owner id");
+        }
                 
         var currency = await _dbContext.Currencies.FirstOrDefaultAsync(x => x.Active && x.Id == command.CurrencyId);
 
