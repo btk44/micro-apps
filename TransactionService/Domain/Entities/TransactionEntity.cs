@@ -3,6 +3,7 @@ using TransactionService.Domain.Common;
 namespace TransactionService.Domain.Entities;
 
 public class TransactionEntity: BaseEntity {
+    public int OwnerId { get; set; }
     public DateTime Date { get; set; }
     public int AccountId { get; set; }
     public AccountEntity Account { get; set; }

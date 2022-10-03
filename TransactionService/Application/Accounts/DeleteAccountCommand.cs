@@ -15,7 +15,7 @@ public class DeleteAccountCommand: IRequest<Result<bool>> {
 public class DeleteAccountCommandHandler: IRequestHandler<DeleteAccountCommand, Result<bool>> {
     private IApplicationDbContext _dbContext;
 
-    public DeleteAccountCommandHandler(IApplicationDbContext dbContext, IMapper accountMapper){
+    public DeleteAccountCommandHandler(IApplicationDbContext dbContext){
         _dbContext = dbContext;
     }
 
