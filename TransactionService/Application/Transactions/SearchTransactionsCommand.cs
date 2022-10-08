@@ -23,22 +23,22 @@ public class SearchTransactionsCommand: IRequest<Result<List<TransactionDto>>> {
 public class SearchTransactionsCommandHandler : IRequestHandler<SearchTransactionsCommand, Result<List<TransactionDto>>>
 {
     private IApplicationDbContext _dbContext;
-    private IMapper _accountMapper;
+    private IMapper _transactionMapper;
 
     public SearchTransactionsCommandHandler(IApplicationDbContext dbContext, IMapper mapper)
     {
         _dbContext = dbContext;
-        _accountMapper = mapper;
+        _transactionMapper = mapper;
     }
 
     public async Task<Result<List<TransactionDto>>> Handle(SearchTransactionsCommand command, CancellationToken cancellationToken)
     {
-        var accountQuery = _dbContext.Transactions
+        var transactionQuery = _dbContext.Transactions
                 .Where(x => x.Active != command.Removed &&
                             x.OwnerId == command.OwnerId && 
                             x.Amount > command.AmountFrom && x.Amount < command.AmountTo);
 
 
-        return await accountQuery.Select(x => _accountMapper.Map<TransactionDto>(x)).ToListAsync();
+        return await transactionQuery.Select(x => _transactionMapper.Map<TransactionDto>(x)).ToListAsync();
     }
 }
