@@ -3,17 +3,19 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using TransactionService.Application.Common.Exceptions;
 using TransactionService.Application.Common.Interfaces;
-using TransactionService.Application.Common.Models;
 using TransactionService.Application.Common.Tools;
-using TransactionService.Domain.Entities;
 
 namespace TransactionService.Application.Transactions;
 
 public class UpdateTransactionCommand: IRequest<Result<bool>> {
     public int OwnerId { get; set; }
     public int Id { get; set; }
-    public string Name { get; set; }
-    public int CurrencyId { get; set; }
+    public DateTime Date { get; set; }
+    public int AccountId { get; set; }
+    public double Amount { get; set; }
+    public string Payee { get; set; }
+    public int CategoryId { get; set; }
+    public string Comment { get; set; }
 }
 
 public class UpdateTransactionCommandHandler: IRequestHandler<UpdateTransactionCommand, Result<bool>> {
@@ -30,13 +32,31 @@ public class UpdateTransactionCommandHandler: IRequestHandler<UpdateTransactionC
             return new TransactionValidationException("Incorrect owner id");
         }
 
+        var account = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.Active && x.OwnerId == command.OwnerId && x.Id == command.AccountId);
+        if (account == null){
+            return new TransactionValidationException("Account does not exist");
+        }
+
+        var category = await _dbContext.Categories.FirstOrDefaultAsync(x => x.Active && x.OwnerId == command.OwnerId && x.Id == command.CategoryId);
+        if (category == null){
+            return new TransactionValidationException("Category does not exist");
+        }
+
         var transactionEntity = await _dbContext.Transactions.FirstOrDefaultAsync(x => x.Active && x.OwnerId == command.OwnerId && x.Id == command.Id);
 
         if(transactionEntity == null){
             return new TransactionValidationException("Transaction does not exist");
         }
 
-        _dbContext.Transactions.Add(transactionEntity);      
+        // to do: consider mapping            
+        transactionEntity.Date = command.Date;
+        transactionEntity.Account = account;
+        transactionEntity.AccountId = account.Id;
+        transactionEntity.Amount = command.Amount;
+        transactionEntity.Payee = command.Payee;
+        transactionEntity.Category = category;
+        transactionEntity.CategoryId = category.Id;
+        transactionEntity.Comment = command.Comment;  
 
         if(await _dbContext.SaveChangesAsync() <= 0){
             return new TransactionValidationException("Save error - please try again");

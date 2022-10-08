@@ -1,4 +1,3 @@
-using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using TransactionService.Application.Common.Exceptions;
@@ -20,13 +19,13 @@ public class DeleteTransactionCommandHandler: IRequestHandler<DeleteTransactionC
     }
 
     public async Task<Result<bool>> Handle(DeleteTransactionCommand command, CancellationToken cancellationToken){
-        var accountEntity = await _dbContext.Transactions.FirstOrDefaultAsync(x => x.Active && x.OwnerId == command.OwnerId && x.Id == command.Id);
+        var transactionEntity = await _dbContext.Transactions.FirstOrDefaultAsync(x => x.Active && x.OwnerId == command.OwnerId && x.Id == command.Id);
 
-        if(accountEntity == null){
+        if(transactionEntity == null){
             return true;
         }
 
-        accountEntity.Active = false;
+        transactionEntity.Active = false;
 
         if(await _dbContext.SaveChangesAsync() <= 0){
             return new TransactionValidationException("Save error - please try again");
