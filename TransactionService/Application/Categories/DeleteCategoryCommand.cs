@@ -3,23 +3,23 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using TransactionService.Application.Common.Exceptions;
 using TransactionService.Application.Common.Interfaces;
-using TransactionService.Application.Common.Tools;
+using Shared.Tools;
 
 namespace TransactionService.Application.Categories;
 
-public class DeleteCategoryCommand: IRequest<Result<bool>> {
+public class DeleteCategoryCommand: IRequest<Either<bool, CategoryValidationException>> {
     public int OwnerId { get; set; }
     public int Id { get; set; }
 }
 
-public class DeleteCategoryCommandHandler: IRequestHandler<DeleteCategoryCommand, Result<bool>> {
+public class DeleteCategoryCommandHandler: IRequestHandler<DeleteCategoryCommand, Either<bool, CategoryValidationException>> {
     private IApplicationDbContext _dbContext;
 
     public DeleteCategoryCommandHandler(IApplicationDbContext dbContext){
         _dbContext = dbContext;
     }
 
-    public async Task<Result<bool>> Handle(DeleteCategoryCommand command, CancellationToken cancellationToken){
+    public async Task<Either<bool, CategoryValidationException>> Handle(DeleteCategoryCommand command, CancellationToken cancellationToken){
         var categoryEntity = await _dbContext.Categories.FirstOrDefaultAsync(x => x.Active && x.OwnerId == command.OwnerId && x.Id == command.Id);
 
         if(categoryEntity == null){

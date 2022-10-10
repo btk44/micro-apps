@@ -1,4 +1,4 @@
-namespace TransactionService.Application.Common.Tools;
+namespace Shared.Tools;
 
 public readonly struct Result<V> {
     internal readonly bool IsSuccess;

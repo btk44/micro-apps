@@ -1,11 +1,10 @@
 using System.Security.Claims;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace TransactionService.Api;
+namespace Shared.Api;
 
-[ApiController]
-[Route("api/[controller]")]
 public abstract class ApiControllerBase : ControllerBase
 {
     private ISender _mediator = null!;

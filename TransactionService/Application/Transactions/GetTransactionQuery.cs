@@ -4,16 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using TransactionService.Application.Common.Exceptions;
 using TransactionService.Application.Common.Interfaces;
 using TransactionService.Application.Common.Models;
-using TransactionService.Application.Common.Tools;
 
 namespace TransactionService.Application.Transactions;
 
-public class GetTransactionQuery: IRequest<Result<TransactionDto>> {
+public class GetTransactionQuery: IRequest<TransactionDto> {
     public int OwnerId { get; set; }
     public int Id { get; set; }
 }
 
-public class GetTransactionQueryHandler : IRequestHandler<GetTransactionQuery, Result<TransactionDto>>
+public class GetTransactionQueryHandler : IRequestHandler<GetTransactionQuery, TransactionDto>
 {
     private IApplicationDbContext _dbContext;
     private IMapper _transactionMapper;
@@ -24,12 +23,12 @@ public class GetTransactionQueryHandler : IRequestHandler<GetTransactionQuery, R
         _transactionMapper = mapper;    
     }
 
-    public async Task<Result<TransactionDto>> Handle(GetTransactionQuery query, CancellationToken cancellationToken)
+    public async Task<TransactionDto> Handle(GetTransactionQuery query, CancellationToken cancellationToken)
     {
         var transactionEntity = await _dbContext.Transactions.FirstOrDefaultAsync(x => x.Active && x.OwnerId == query.OwnerId && x.Id == query.Id);
 
         if(transactionEntity == null){
-            return new TransactionValidationException("Transaction does not exist");
+            return null;
         }
 
         return _transactionMapper.Map<TransactionDto>(transactionEntity);

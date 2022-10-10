@@ -2,18 +2,18 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using TransactionService.Application.Common.Exceptions;
 using TransactionService.Application.Common.Interfaces;
-using TransactionService.Application.Common.Tools;
+using Shared.Tools;
 
 namespace TransactionService.Application.Categories;
 
-public class UpdateCategoryCommand: IRequest<Result<bool>> {
+public class UpdateCategoryCommand: IRequest<Either<bool, CategoryValidationException>> {
     public int OwnerId { get; set; }
     public int Id { get; set; }
     public string Name { get; set; }
     public int ParentCategoryId { get; set; }
 }
 
-public class UpdateCategoryCommandHandler: IRequestHandler<UpdateCategoryCommand, Result<bool>> {
+public class UpdateCategoryCommandHandler: IRequestHandler<UpdateCategoryCommand, Either<bool, CategoryValidationException>> {
     private IApplicationDbContext _dbContext;
     private CategoryValidator _categoryValidator;
 
@@ -22,7 +22,7 @@ public class UpdateCategoryCommandHandler: IRequestHandler<UpdateCategoryCommand
         _categoryValidator = new CategoryValidator();
     }
 
-    public async Task<Result<bool>> Handle(UpdateCategoryCommand command, CancellationToken cancellationToken){
+    public async Task<Either<bool, CategoryValidationException>> Handle(UpdateCategoryCommand command, CancellationToken cancellationToken){
         if(!_categoryValidator.IsNameValid(command.Name)){
             return new CategoryValidationException("Incorrect category name");
         }

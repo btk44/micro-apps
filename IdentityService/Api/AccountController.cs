@@ -23,7 +23,7 @@ public class AccountController : ApiControllerBase
     [HttpPut("update")]
     public async Task<ActionResult<bool>> Update([FromBody] UpdateAccountCommand command)
     {
-        var accountId = Convert.ToInt32(TokenService.GetClaimFromToken(User, Claims.AccountId));
+        var accountId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId));
         var result = await Mediator.Send(command);
         return result.Match<ActionResult>(
             success => Ok(),
@@ -35,7 +35,7 @@ public class AccountController : ApiControllerBase
     [HttpDelete("delete")]
     public async Task<ActionResult<bool>> Delete([FromQuery] int accountId)
     {
-        var tokenAccountId = Convert.ToInt32(TokenService.GetClaimFromToken(User, Claims.AccountId));
+        var tokenAccountId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId));
         if(tokenAccountId != accountId){
             return BadRequest();
         }

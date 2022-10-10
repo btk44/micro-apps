@@ -25,7 +25,7 @@ public class AuthController : ApiControllerBase
     {
         var command = new RefreshTokenCommand() { 
             RefreshToken = refreshToken,
-            AccountId = Convert.ToInt32(TokenService.GetClaimFromToken(User, Claims.AccountId))
+            AccountId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId))
         };
         var result = await Mediator.Send(command);
         return result.Match<ActionResult>(

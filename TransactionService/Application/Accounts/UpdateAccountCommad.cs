@@ -2,18 +2,18 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using TransactionService.Application.Common.Exceptions;
 using TransactionService.Application.Common.Interfaces;
-using TransactionService.Application.Common.Tools;
+using Shared.Tools;
 
 namespace TransactionService.Application.Accounts;
 
-public class UpdateAccountCommand: IRequest<Result<bool>> {
+public class UpdateAccountCommand: IRequest<Either<bool,AccountValidationException>> {
     public int OwnerId { get; set; }
     public int Id { get; set; }
     public string Name { get; set; }
     public int CurrencyId { get; set; }
 }
 
-public class UpdateAccountCommandHandler: IRequestHandler<UpdateAccountCommand, Result<bool>> {
+public class UpdateAccountCommandHandler: IRequestHandler<UpdateAccountCommand, Either<bool, AccountValidationException>> {
     private IApplicationDbContext _dbContext;
     private AccountValidator _accountValidator;
 
@@ -22,7 +22,7 @@ public class UpdateAccountCommandHandler: IRequestHandler<UpdateAccountCommand, 
         _accountValidator = new AccountValidator();
     }
 
-    public async Task<Result<bool>> Handle(UpdateAccountCommand command, CancellationToken cancellationToken){
+    public async Task<Either<bool, AccountValidationException>> Handle(UpdateAccountCommand command, CancellationToken cancellationToken){
         if(!_accountValidator.IsNameValid(command.Name)){
             return new AccountValidationException("Incorrect account name");
         }

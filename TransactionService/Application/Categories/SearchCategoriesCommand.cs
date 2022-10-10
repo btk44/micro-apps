@@ -3,11 +3,10 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using TransactionService.Application.Common.Interfaces;
 using TransactionService.Application.Common.Models;
-using TransactionService.Application.Common.Tools;
 
 namespace TransactionService.Application.Categories;
 
-public class SearchCategoriesCommand: IRequest<Result<List<CategoryDto>>> {
+public class SearchCategoriesCommand: IRequest<List<CategoryDto>> {
     public int OwnerId { get; set; }
     public string Name { get; set; }
     public int Id { get; set; }
@@ -15,7 +14,7 @@ public class SearchCategoriesCommand: IRequest<Result<List<CategoryDto>>> {
     public bool Closed { get; set; }
 }
 
-public class SearchCategoriesCommandHandler : IRequestHandler<SearchCategoriesCommand, Result<List<CategoryDto>>>
+public class SearchCategoriesCommandHandler : IRequestHandler<SearchCategoriesCommand, List<CategoryDto>>
 {
     private IApplicationDbContext _dbContext;
     private IMapper _categoryMapper;
@@ -26,7 +25,7 @@ public class SearchCategoriesCommandHandler : IRequestHandler<SearchCategoriesCo
         _categoryMapper = mapper;
     }
 
-    public async Task<Result<List<CategoryDto>>> Handle(SearchCategoriesCommand command, CancellationToken cancellationToken)
+    public async Task<List<CategoryDto>> Handle(SearchCategoriesCommand command, CancellationToken cancellationToken)
     {
         var categoryQuery = _dbContext.Categories
                 .Where(x => x.Active != command.Closed &&

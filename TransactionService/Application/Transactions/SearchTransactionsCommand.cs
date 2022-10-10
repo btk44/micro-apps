@@ -3,11 +3,10 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using TransactionService.Application.Common.Interfaces;
 using TransactionService.Application.Common.Models;
-using TransactionService.Application.Common.Tools;
 
 namespace TransactionService.Application.Transactions;
 
-public class SearchTransactionsCommand: IRequest<Result<List<TransactionDto>>> {
+public class SearchTransactionsCommand: IRequest<List<TransactionDto>> {
     public DateTime DateFrom { get; set; }
     public DateTime DateTo { get; set; }
     public int TransactionId { get; set; }
@@ -20,7 +19,7 @@ public class SearchTransactionsCommand: IRequest<Result<List<TransactionDto>>> {
     public bool Removed { get; set; }
 }
 
-public class SearchTransactionsCommandHandler : IRequestHandler<SearchTransactionsCommand, Result<List<TransactionDto>>>
+public class SearchTransactionsCommandHandler : IRequestHandler<SearchTransactionsCommand, List<TransactionDto>>
 {
     private IApplicationDbContext _dbContext;
     private IMapper _transactionMapper;
@@ -31,7 +30,7 @@ public class SearchTransactionsCommandHandler : IRequestHandler<SearchTransactio
         _transactionMapper = mapper;
     }
 
-    public async Task<Result<List<TransactionDto>>> Handle(SearchTransactionsCommand command, CancellationToken cancellationToken)
+    public async Task<List<TransactionDto>> Handle(SearchTransactionsCommand command, CancellationToken cancellationToken)
     {
         var transactionQuery = _dbContext.Transactions
                 .Where(x => x.Active != command.Removed &&

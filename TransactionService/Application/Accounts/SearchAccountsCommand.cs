@@ -3,11 +3,10 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using TransactionService.Application.Common.Interfaces;
 using TransactionService.Application.Common.Models;
-using TransactionService.Application.Common.Tools;
 
 namespace TransactionService.Application.Accounts;
 
-public class SearchAccountsCommand: IRequest<Result<List<AccountDto>>> {
+public class SearchAccountsCommand: IRequest<List<AccountDto>> {
     public int OwnerId { get; set; }
     public List<int> Currencies { get; set; }
     public string Name { get; set; }
@@ -17,7 +16,7 @@ public class SearchAccountsCommand: IRequest<Result<List<AccountDto>>> {
     public bool Closed { get; set; }
 }
 
-public class SearchAccountsCommandHandler : IRequestHandler<SearchAccountsCommand, Result<List<AccountDto>>>
+public class SearchAccountsCommandHandler : IRequestHandler<SearchAccountsCommand, List<AccountDto>>
 {
     private IApplicationDbContext _dbContext;
     private IMapper _accountMapper;
@@ -28,7 +27,7 @@ public class SearchAccountsCommandHandler : IRequestHandler<SearchAccountsComman
         _accountMapper = mapper;
     }
 
-    public async Task<Result<List<AccountDto>>> Handle(SearchAccountsCommand command, CancellationToken cancellationToken)
+    public async Task<List<AccountDto>> Handle(SearchAccountsCommand command, CancellationToken cancellationToken)
     {
         var accountQuery = _dbContext.Accounts
                 .Where(x => x.Active != command.Closed &&

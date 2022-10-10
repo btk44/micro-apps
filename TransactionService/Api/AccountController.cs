@@ -2,8 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using TransactionService.Application.Common.Models;
 using TransactionService.Application.Accounts;
+using Shared.Constants;
 
-namespace IdentityService.Api;
+namespace TransactionService.Api;
 
 [ApiController]
 public class AccountController : ApiControllerBase
@@ -22,31 +23,27 @@ public class AccountController : ApiControllerBase
     [HttpPut("update")]
     public async Task<ActionResult<bool>> Update([FromBody] UpdateAccountCommand command)
     {
-        // var accountId = Convert.ToInt32(TokenService.GetClaimFromToken(User, Claims.AccountId));
-        // var result = await Mediator.Send(command);
-        // return result.Match<ActionResult>(
-        //     success => Ok(),
-        //     exception => BadRequest(exception.Message)
-        // );
-
-        return BadRequest();
+        var accountId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId));
+        var result = await Mediator.Send(command);
+        return result.Match<ActionResult>(
+            success => Ok(),
+            exception => BadRequest(exception.Message)
+        );
     }
 
     [Authorize]
     [HttpDelete("delete")]
     public async Task<ActionResult<bool>> Delete([FromQuery] int accountId)
     {
-        // var tokenAccountId = Convert.ToInt32(TokenService.GetClaimFromToken(User, Claims.AccountId));
-        // if(tokenAccountId != accountId){
-        //     return BadRequest();
-        // }
+        var tokenAccountId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId));
+        if(tokenAccountId != accountId){
+            return BadRequest();
+        }
 
-        // var result = await Mediator.Send(new DeleteAccountCommand(){ AccountId = accountId });
-        // return result.Match<ActionResult>(
-        //     success => Ok(),
-        //     exception => BadRequest(exception.Message)
-        // );
-
-        return BadRequest();
+        var result = await Mediator.Send(new DeleteAccountCommand(){ Id = accountId });
+        return result.Match<ActionResult>(
+            success => Ok(),
+            exception => BadRequest(exception.Message)
+        );
     }    
 }

@@ -1,15 +1,15 @@
 using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Shared.Tools;
 using TransactionService.Application.Common.Exceptions;
 using TransactionService.Application.Common.Interfaces;
 using TransactionService.Application.Common.Models;
-using TransactionService.Application.Common.Tools;
 using TransactionService.Domain.Entities;
 
 namespace TransactionService.Application.Transactions;
 
-public class CreateTransactionCommand: IRequest<Result<TransactionDto>> {
+public class CreateTransactionCommand: IRequest<Either<TransactionDto, TransactionValidationException>> {
     public int OwnerId { get; set; }
     public DateTime Date { get; set; }
     public int AccountId { get; set; }
@@ -19,7 +19,7 @@ public class CreateTransactionCommand: IRequest<Result<TransactionDto>> {
     public string Comment { get; set; }
 }
 
-public class CreateTransactionCommandHandler: IRequestHandler<CreateTransactionCommand, Result<TransactionDto>> {
+public class CreateTransactionCommandHandler: IRequestHandler<CreateTransactionCommand, Either<TransactionDto, TransactionValidationException>> {
     private IApplicationDbContext _dbContext;
     private TransactionValidator _transactionValidator;
     private IMapper _transactionMapper;
@@ -30,7 +30,7 @@ public class CreateTransactionCommandHandler: IRequestHandler<CreateTransactionC
         _transactionMapper = transactionMapper; // consider moving mapping into Dto file?
     }
 
-    public async Task<Result<TransactionDto>> Handle(CreateTransactionCommand command, CancellationToken cancellationToken){
+    public async Task<Either<TransactionDto, TransactionValidationException>> Handle(CreateTransactionCommand command, CancellationToken cancellationToken){
         if(command.OwnerId <= 0){
             return new TransactionValidationException("Incorrect owner id");
         }

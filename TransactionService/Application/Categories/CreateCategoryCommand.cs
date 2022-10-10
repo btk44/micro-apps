@@ -3,18 +3,18 @@ using MediatR;
 using TransactionService.Application.Common.Exceptions;
 using TransactionService.Application.Common.Interfaces;
 using TransactionService.Application.Common.Models;
-using TransactionService.Application.Common.Tools;
 using TransactionService.Domain.Entities;
+using Shared.Tools;
 
 namespace TransactionService.Application.Categories;
 
-public class CreateCategoryCommand: IRequest<Result<CategoryDto>> {
+public class CreateCategoryCommand: IRequest<Either<CategoryDto, CategoryValidationException>> {
     public int OwnerId { get; set; }
     public string Name { get; set; }
     public int ParentCategoryId { get; set; }
 }
 
-public class CreateCategoryCommandHandler: IRequestHandler<CreateCategoryCommand, Result<CategoryDto>> {
+public class CreateCategoryCommandHandler: IRequestHandler<CreateCategoryCommand, Either<CategoryDto, CategoryValidationException>> {
     private IApplicationDbContext _dbContext;
     private CategoryValidator _categoryValidator;
     private IMapper _categoryMapper;
@@ -25,7 +25,7 @@ public class CreateCategoryCommandHandler: IRequestHandler<CreateCategoryCommand
         _categoryMapper = categoryMapper; // consider moving mapping into Dto file?
     }
 
-    public async Task<Result<CategoryDto>> Handle(CreateCategoryCommand command, CancellationToken cancellationToken){
+    public async Task<Either<CategoryDto, CategoryValidationException>> Handle(CreateCategoryCommand command, CancellationToken cancellationToken){
         if(!_categoryValidator.IsNameValid(command.Name)){
             return new CategoryValidationException("Incorrect category name");
         }

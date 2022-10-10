@@ -1,13 +1,13 @@
 using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Shared.Tools;
 using TransactionService.Application.Common.Exceptions;
 using TransactionService.Application.Common.Interfaces;
-using TransactionService.Application.Common.Tools;
 
 namespace TransactionService.Application.Transactions;
 
-public class UpdateTransactionCommand: IRequest<Result<bool>> {
+public class UpdateTransactionCommand: IRequest<Either<bool, TransactionValidationException>> {
     public int OwnerId { get; set; }
     public int Id { get; set; }
     public DateTime Date { get; set; }
@@ -18,7 +18,7 @@ public class UpdateTransactionCommand: IRequest<Result<bool>> {
     public string Comment { get; set; }
 }
 
-public class UpdateTransactionCommandHandler: IRequestHandler<UpdateTransactionCommand, Result<bool>> {
+public class UpdateTransactionCommandHandler: IRequestHandler<UpdateTransactionCommand, Either<bool, TransactionValidationException>> {
     private IApplicationDbContext _dbContext;
     private TransactionValidator _transactionValidator;
 
@@ -27,7 +27,7 @@ public class UpdateTransactionCommandHandler: IRequestHandler<UpdateTransactionC
         _transactionValidator = new TransactionValidator();
     }
 
-    public async Task<Result<bool>> Handle(UpdateTransactionCommand command, CancellationToken cancellationToken){
+    public async Task<Either<bool, TransactionValidationException>> Handle(UpdateTransactionCommand command, CancellationToken cancellationToken){
         if(command.OwnerId <= 0){
             return new TransactionValidationException("Incorrect owner id");
         }

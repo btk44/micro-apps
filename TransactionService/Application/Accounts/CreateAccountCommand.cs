@@ -4,18 +4,18 @@ using Microsoft.EntityFrameworkCore;
 using TransactionService.Application.Common.Exceptions;
 using TransactionService.Application.Common.Interfaces;
 using TransactionService.Application.Common.Models;
-using TransactionService.Application.Common.Tools;
 using TransactionService.Domain.Entities;
+using Shared.Tools;
 
 namespace TransactionService.Application.Accounts;
 
-public class CreateAccountCommand: IRequest<Result<AccountDto>> {
+public class CreateAccountCommand: IRequest<Either<AccountDto, AccountValidationException>> {
     public int OwnerId { get; set; }
     public string Name { get; set; }
     public int CurrencyId { get; set; }
 }
 
-public class CreateAccountCommandHandler: IRequestHandler<CreateAccountCommand, Result<AccountDto>> {
+public class CreateAccountCommandHandler: IRequestHandler<CreateAccountCommand, Either<AccountDto, AccountValidationException>> {
     private IApplicationDbContext _dbContext;
     private AccountValidator _accountValidator;
     private IMapper _accountMapper;
@@ -26,7 +26,7 @@ public class CreateAccountCommandHandler: IRequestHandler<CreateAccountCommand, 
         _accountMapper = accountMapper; // consider moving mapping into Dto file?
     }
 
-    public async Task<Result<AccountDto>> Handle(CreateAccountCommand command, CancellationToken cancellationToken){
+    public async Task<Either<AccountDto, AccountValidationException>> Handle(CreateAccountCommand command, CancellationToken cancellationToken){
         if(!_accountValidator.IsNameValid(command.Name)){
             return new AccountValidationException("Incorrect account name");
         }

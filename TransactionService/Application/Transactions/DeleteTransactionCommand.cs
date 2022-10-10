@@ -1,24 +1,24 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Shared.Tools;
 using TransactionService.Application.Common.Exceptions;
 using TransactionService.Application.Common.Interfaces;
-using TransactionService.Application.Common.Tools;
 
 namespace TransactionService.Application.Transactions;
 
-public class DeleteTransactionCommand: IRequest<Result<bool>> {
+public class DeleteTransactionCommand: IRequest<Either<bool, TransactionValidationException>> {
     public int OwnerId { get; set; }
     public int Id { get; set; }
 }
 
-public class DeleteTransactionCommandHandler: IRequestHandler<DeleteTransactionCommand, Result<bool>> {
+public class DeleteTransactionCommandHandler: IRequestHandler<DeleteTransactionCommand, Either<bool, TransactionValidationException>> {
     private IApplicationDbContext _dbContext;
 
     public DeleteTransactionCommandHandler(IApplicationDbContext dbContext){
         _dbContext = dbContext;
     }
 
-    public async Task<Result<bool>> Handle(DeleteTransactionCommand command, CancellationToken cancellationToken){
+    public async Task<Either<bool, TransactionValidationException>> Handle(DeleteTransactionCommand command, CancellationToken cancellationToken){
         var transactionEntity = await _dbContext.Transactions.FirstOrDefaultAsync(x => x.Active && x.OwnerId == command.OwnerId && x.Id == command.Id);
 
         if(transactionEntity == null){
