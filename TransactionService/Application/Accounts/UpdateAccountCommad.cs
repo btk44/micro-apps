@@ -1,11 +1,8 @@
-using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using TransactionService.Application.Common.Exceptions;
 using TransactionService.Application.Common.Interfaces;
-using TransactionService.Application.Common.Models;
 using TransactionService.Application.Common.Tools;
-using TransactionService.Domain.Entities;
 
 namespace TransactionService.Application.Accounts;
 

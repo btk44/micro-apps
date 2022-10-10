@@ -7,4 +7,6 @@ public class AccountEntity: BaseEntity {
     public double Amount { get; set; }
     public string Name { get; set; }
     public int CurrencyId { get; set; }
+    public CurrencyEntity Currency { get; set; }
+    public List<TransactionEntity> Transactions { get; set; }
 }
