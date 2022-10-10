@@ -1,3 +1,4 @@
+using TransactionService.Api.Middleware;
 using TransactionService.Application;
 using TransactionService.Infrastructure;
 
@@ -24,6 +25,7 @@ app.UseAuthentication();
 app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();
+app.UseMiddleware<ErrorHandlerMiddleware>();
 
 using(var scope = app.Services.CreateScope()){
     var dbContextInitialiser = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitialiser>();

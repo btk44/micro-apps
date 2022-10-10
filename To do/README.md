@@ -10,3 +10,7 @@ Identity service:
 * unit tests
 
 
+Migrations (run from csproj directory)
+dotnet ef migrations add InitialCreate --output-dir Infrastructure/Migrations 
+
+
