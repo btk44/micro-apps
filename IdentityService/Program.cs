@@ -1,6 +1,6 @@
-using IdentityService.Api.Middleware;
 using IdentityService.Application;
 using IdentityService.Infrastructure;
+using Shared.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
