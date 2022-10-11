@@ -1,4 +1,5 @@
-using IdentityService.Domain.Common;
+
+using Shared.Entities;
 
 namespace IdentityService.Domain.Entities;
 

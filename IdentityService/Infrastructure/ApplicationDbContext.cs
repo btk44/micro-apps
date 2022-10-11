@@ -1,9 +1,8 @@
 
 using IdentityService.Application.Common.Interfaces;
-using IdentityService.Domain.Common;
 using IdentityService.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Shared.Infrastructure;
 
 namespace IdentityService.Infrastructure;
 public class ApplicationDbContext : DbContext, IApplicationDbContext{
@@ -15,25 +14,13 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext{
     protected override void OnModelCreating(ModelBuilder modelBuilder) { 
         base.OnModelCreating(modelBuilder);
 
-        BaseBuilder(modelBuilder.Entity<AccountEntity>());
-        BaseBuilder(modelBuilder.Entity<RefreshTokenEntity>());
-        BaseBuilder(modelBuilder.Entity<FailedAuthInfoEntity>());
-        BaseBuilder(modelBuilder.Entity<ResetPasswordTokenEntity>());
+        BaseEntityBuilder.Build(modelBuilder.Entity<AccountEntity>());
+        BaseEntityBuilder.Build(modelBuilder.Entity<RefreshTokenEntity>());
+        BaseEntityBuilder.Build(modelBuilder.Entity<FailedAuthInfoEntity>());
+        BaseEntityBuilder.Build(modelBuilder.Entity<ResetPasswordTokenEntity>());
 
         modelBuilder.Entity<AccountEntity>().HasMany(x => x.RefreshTokens).WithOne(x => x.Account);        
         modelBuilder.Entity<AccountEntity>().HasMany(x => x.ResetPasswordTokens).WithOne(x => x.Account);        
         modelBuilder.Entity<AccountEntity>().HasOne(x => x.FailedAuthInfo).WithOne(x => x.Account).HasForeignKey<FailedAuthInfoEntity>(x=>x.AccountId);        
-    }
-
-    protected void BaseBuilder<T>(EntityTypeBuilder<T> entity) where T : BaseEntity
-    {
-        entity.Property(e => e.Id).UseIdentityColumn();
-        entity.Property(e => e.Active).IsRequired().HasDefaultValue(true);
-        entity.Property(e => e.Created).IsRequired().HasDefaultValueSql("getdate()");
-        entity.Property(e => e.CreatedBy).IsRequired().HasDefaultValue(-1);
-        entity.Property(e => e.Modified).IsRequired().HasDefaultValueSql("getdate()").ValueGeneratedOnAddOrUpdate();
-        entity.Property(e => e.ModifiedBy).IsRequired().HasDefaultValue(-1);
-    }
-
-    
+    }    
 }
