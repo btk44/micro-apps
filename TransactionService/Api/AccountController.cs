@@ -3,10 +3,12 @@ using Microsoft.AspNetCore.Authorization;
 using TransactionService.Application.Common.Models;
 using TransactionService.Application.Accounts;
 using Shared.Constants;
+using Shared.Api;
 
 namespace TransactionService.Api;
 
 [ApiController]
+[Route("api/[controller]")]
 public class AccountController : ApiControllerBase
 {
     [HttpPost("register")]

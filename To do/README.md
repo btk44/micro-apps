@@ -14,3 +14,6 @@ Migrations (run from csproj directory)
 dotnet ef migrations add InitialCreate --output-dir Infrastructure/Migrations 
 
 
+* Claims constant must be shared between services but keeping it 
+
+

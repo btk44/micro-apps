@@ -1,20 +1,20 @@
-using IdentityService.Application.Common.Tools;
 using IdentityService.Application.Common.Exceptions;
 using IdentityService.Application.Common.Interfaces;
 using IdentityService.Application.Common.Models;
 using IdentityService.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using IdentityService.Application.Common.Constants;
+using Shared.Tools;
+using Shared.Constants;
 
 namespace IdentityService.Application.Authorization;
 
-public class LoginCommand: IRequest<Result<TokenDataDto>> {
+public class LoginCommand: IRequest<Either<TokenDataDto, AuthException>> {
     public string Email { get; set; }
     public string Password { get; set; }
 }
 
-public class LoginCommandHandler: IRequestHandler<LoginCommand, Result<TokenDataDto>> {
+public class LoginCommandHandler: IRequestHandler<LoginCommand, Either<TokenDataDto, AuthException>> {
     private IApplicationDbContext _dbContext;
     private AuthValidator _authValidator;
     private ITokenService _tokenService;
@@ -27,24 +27,24 @@ public class LoginCommandHandler: IRequestHandler<LoginCommand, Result<TokenData
         _authHelper = new AuthHelper(dbContext);
     }
 
-    public async Task<Result<TokenDataDto>> Handle(LoginCommand command, CancellationToken cancellationToken){
+    public async Task<Either<TokenDataDto, AuthException>> Handle(LoginCommand command, CancellationToken cancellationToken){
         var account = await _dbContext.Accounts
                                 .Include(x => x.FailedAuthInfo)
                                 .Include(x => x.RefreshTokens)
                                 .FirstOrDefaultAsync(x => x.Active && x.Email == command.Email);
 
         if(account == null){
-            return new Result<TokenDataDto>(new AuthException("Invalid email or password"));
+            return new AuthException("Invalid email or password");
         }
 
         if(_authValidator.IsAccountBlocked(account))  {
             await _authHelper.UpdateFailedAuthAttemptAndSave(account, true);
-            return new Result<TokenDataDto>(new AuthException("Account is blocked, try again in 5 minutes"));
+            return new AuthException("Account is blocked, try again in 5 minutes");
         }     
         
         if(!_authValidator.IsPasswordValid(account, command.Password)){
             await _authHelper.UpdateFailedAuthAttemptAndSave(account, true);
-            return new Result<TokenDataDto>(new AuthException("Invalid email or password"));
+            return new AuthException("Invalid email or password");
         }
 
         _authHelper.UpdateFailedAuthAttempt(account, false);
@@ -64,6 +64,6 @@ public class LoginCommandHandler: IRequestHandler<LoginCommand, Result<TokenData
 
         await _dbContext.SaveChangesAsync();
         
-        return new Result<TokenDataDto>(tokenData);
+        return tokenData;
     }
 }

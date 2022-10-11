@@ -1,20 +1,20 @@
-using IdentityService.Application.Common.Tools;
 using IdentityService.Application.Common.Exceptions;
 using IdentityService.Application.Common.Interfaces;
 using IdentityService.Application.Common.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using IdentityService.Application.Common.Constants;
 using IdentityService.Domain.Entities;
+using Shared.Tools;
+using Shared.Constants;
 
 namespace IdentityService.Application.Authorization;
 
-public class RefreshTokenCommand: IRequest<Result<TokenDataDto>> {
+public class RefreshTokenCommand: IRequest<Either<TokenDataDto, AuthException>> {
     public string RefreshToken { get; set; }
     public int AccountId { get; set; } 
 }
 
-public class RefreshTokenCommandHandler: IRequestHandler<RefreshTokenCommand, Result<TokenDataDto>> {
+public class RefreshTokenCommandHandler: IRequestHandler<RefreshTokenCommand, Either<TokenDataDto, AuthException>> {
     private IApplicationDbContext _dbContext;
     private AuthValidator _authValidator;
     private ITokenService _tokenService;
@@ -27,9 +27,9 @@ public class RefreshTokenCommandHandler: IRequestHandler<RefreshTokenCommand, Re
         _authHelper = new AuthHelper(dbContext);
     }
 
-    public async Task<Result<TokenDataDto>> Handle(RefreshTokenCommand command, CancellationToken cancellationToken){
+    public async Task<Either<TokenDataDto, AuthException>> Handle(RefreshTokenCommand command, CancellationToken cancellationToken){
         if (string.IsNullOrEmpty(command.RefreshToken)){
-            return new Result<TokenDataDto>(new AuthException("No token provided"));
+            return new AuthException("No token provided");
         }
 
         var account = await _dbContext.Accounts
@@ -39,19 +39,19 @@ public class RefreshTokenCommandHandler: IRequestHandler<RefreshTokenCommand, Re
 
         if(account == null){
             await _authHelper.UpdateFailedAuthAttemptAndSave(account, true);
-            return new Result<TokenDataDto>(new AuthException("Account does not exist"));
+            return new AuthException("Account does not exist");
         }
 
         if(_authValidator.IsAccountBlocked(account))  {
             await _authHelper.UpdateFailedAuthAttemptAndSave(account, true);
-            return new Result<TokenDataDto>(new AuthException("Account is blocked, try again in 5 minutes"));
+            return new AuthException("Account is blocked, try again in 5 minutes");
         }     
 
         var oldRefreshToken = account.RefreshTokens.FirstOrDefault(x => x.Active && x.Token == command.RefreshToken);
 
         if(oldRefreshToken == null || oldRefreshToken.ExpiresAt < DateTime.UtcNow){
             await _authHelper.UpdateFailedAuthAttemptAndSave(account, true);
-            return new Result<TokenDataDto>(new AuthException("Token is invalid"));
+            return new AuthException("Token is invalid");
         }
 
         // do not reset failed attempts here - only in login
@@ -70,6 +70,6 @@ public class RefreshTokenCommandHandler: IRequestHandler<RefreshTokenCommand, Re
         _authHelper.CleanupOldTokens(account);
 
         await _dbContext.SaveChangesAsync();
-        return new Result<TokenDataDto>(tokenData);
+        return tokenData;
     }
 }

@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Mvc;
 using IdentityService.Application.Authorization;
 using IdentityService.Application.Common.Models;
 using Microsoft.AspNetCore.Authorization;
-using IdentityService.Application.Common.Constants;
+using Shared.Api;
+using Shared.Constants;
 
 namespace IdentityService.Api;
 
 [ApiController]
+[Route("api/[controller]")]
 public class AuthController : ApiControllerBase
 {
     [HttpPost("login")]

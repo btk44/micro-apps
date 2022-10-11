@@ -1,5 +1,4 @@
 using AutoMapper;
-using IdentityService.Application.Common.Tools;
 using IdentityService.Application.Common.Exceptions;
 using IdentityService.Application.Common.Interfaces;
 using IdentityService.Application.Common.Models;
@@ -7,15 +6,16 @@ using IdentityService.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Shared.Tools;
 
 namespace IdentityService.Application.Accounts;
 
-public class CreateAccountCommand: IRequest<Result<AccountDto>> {
+public class CreateAccountCommand: IRequest<Either<AccountDto, AccountValidationException>> {
     public string Email { get; set; }
     public string Password { get; set; }
 }
 
-public class CreateAccountCommandHandler: IRequestHandler<CreateAccountCommand, Result<AccountDto>> {
+public class CreateAccountCommandHandler: IRequestHandler<CreateAccountCommand, Either<AccountDto, AccountValidationException>> {
     private IApplicationDbContext _dbContext;
     private AccountValidator _accountValidator;
     private PasswordHasher<string> _passwordHasher;
@@ -28,21 +28,21 @@ public class CreateAccountCommandHandler: IRequestHandler<CreateAccountCommand, 
         _accountMapper = accountMapper; // consider moving mapping into Dto file?
     }
 
-    public async Task<Result<AccountDto>> Handle(CreateAccountCommand command, CancellationToken cancellationToken){
+    public async Task<Either<AccountDto,AccountValidationException>> Handle(CreateAccountCommand command, CancellationToken cancellationToken){
         if(!_accountValidator.IsDataProvided(command.Email, command.Password)){
-            return new Result<AccountDto>(new AccountValidationException("Empty email or password"));
+            return new AccountValidationException("Empty email or password");
         }
 
         if(!_accountValidator.IsEmailValid(command.Email)){
-            return new Result<AccountDto>(new AccountValidationException("Incorrect email format"));
+            return new AccountValidationException("Incorrect email format");
         }
 
         if(!_accountValidator.IsPasswordSecure(command.Password)){
-            return new Result<AccountDto>(new AccountValidationException("Password does not fulfill requirements: [to do]"));
+            return new AccountValidationException("Password does not fulfill requirements: [to do]");
         }
 
         if(await _dbContext.Accounts.AnyAsync(x => x.Active && x.Email == command.Email)){
-            return new Result<AccountDto>(new AccountValidationException("Account with this email already exists"));
+            return new AccountValidationException("Account with this email already exists");
         };
 
         var accountEntity = new AccountEntity(){
@@ -53,11 +53,11 @@ public class CreateAccountCommandHandler: IRequestHandler<CreateAccountCommand, 
         _dbContext.Accounts.Add(accountEntity);      
 
         if(await _dbContext.SaveChangesAsync() <= 0){
-            return new Result<AccountDto>(new AccountValidationException("Save error - please try again"));
+            return new AccountValidationException("Save error - please try again");
         }
 
         var dto = _accountMapper.Map<AccountDto>(accountEntity);
 
-        return new Result<AccountDto>(dto);
+        return dto;
     }
 }
