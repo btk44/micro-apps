@@ -1,4 +1,4 @@
-using TransactionService.Api.Middleware;
+using Shared.Api.Middleware;
 using TransactionService.Application;
 using TransactionService.Infrastructure;
 
