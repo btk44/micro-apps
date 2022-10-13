@@ -30,6 +30,7 @@ public class CategoryController : ApiControllerBase
     [HttpPost]
     public async Task<ActionResult<CategoryDto>> Create([FromBody] CreateCategoryCommand command)
     {
+        // to do: consider getting owner id from token 
         var result = await Mediator.Send(command);
         return result.Match<ActionResult>(
             category => Ok(category),

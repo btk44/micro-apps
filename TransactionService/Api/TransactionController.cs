@@ -30,6 +30,7 @@ public class TransactionController : ApiControllerBase
     [HttpPost]
     public async Task<ActionResult<TransactionDto>> Create([FromBody] CreateTransactionCommand command)
     {
+        // to do: consider getting owner id from token 
         var result = await Mediator.Send(command);
         return result.Match<ActionResult>(
             transaction => Ok(transaction),

@@ -23,7 +23,7 @@ public class CreateAccountCommandHandler: IRequestHandler<CreateAccountCommand, 
 
     public CreateAccountCommandHandler(IApplicationDbContext dbContext, IMapper accountMapper){
         _dbContext = dbContext;
-        _accountValidator = new AccountValidator();  // move validator file to Accounts! consider splitting
+        _accountValidator = new AccountValidator(); 
         _passwordHasher = new PasswordHasher<string>(); 
         _accountMapper = accountMapper; // consider moving mapping into Dto file?
     }

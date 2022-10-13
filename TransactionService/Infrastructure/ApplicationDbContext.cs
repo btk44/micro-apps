@@ -23,6 +23,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext{
         modelBuilder.Entity<AccountEntity>().HasOne(x => x.Currency);
         modelBuilder.Entity<TransactionEntity>().HasOne(x => x.Account).WithMany(x => x.Transactions);
         modelBuilder.Entity<TransactionEntity>().HasOne(x => x.Category);
-        modelBuilder.Entity<CategoryEntity>().HasMany(x => x.SubCategories).WithOne(x => x.ParentCategory);
+        modelBuilder.Entity<CategoryEntity>().HasMany(x => x.SubCategories).WithOne(x => x.ParentCategory).OnDelete(DeleteBehavior.NoAction);
     }    
 }
+

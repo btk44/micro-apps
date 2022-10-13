@@ -30,6 +30,7 @@ public class AccountController : ApiControllerBase
     [HttpPost]
     public async Task<ActionResult<AccountDto>> Create([FromBody] CreateAccountCommand command)
     {
+        // to do: consider getting owner id from token 
         var result = await Mediator.Send(command);
         return result.Match<ActionResult>(
             account => Ok(account),
