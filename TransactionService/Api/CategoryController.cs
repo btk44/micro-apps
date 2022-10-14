@@ -23,14 +23,16 @@ public class CategoryController : ApiControllerBase
 
     [HttpPost("search")]
     public async Task<ActionResult<List<CategoryDto>>> Search([FromBody] SearchCategoriesCommand command){
-        var accountId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId));
+        // possible upgrade: unlock searching objects for other owners
+        command.OwnerId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId));
         return await Mediator.Send(command);
     }
 
     [HttpPost]
     public async Task<ActionResult<CategoryDto>> Create([FromBody] CreateCategoryCommand command)
     {
-        // to do: consider getting owner id from token 
+        // possible upgrade: unlock creating objects for other owners
+        command.OwnerId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId));
         var result = await Mediator.Send(command);
         return result.Match<ActionResult>(
             category => Ok(category),
@@ -41,7 +43,8 @@ public class CategoryController : ApiControllerBase
     [HttpPut]
     public async Task<ActionResult<bool>> Update([FromBody] UpdateCategoryCommand command)
     {
-        var accountId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId));
+        // possible upgrade: unlock update objects for other owners
+        command.OwnerId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId));
         var result = await Mediator.Send(command);
         return result.Match<ActionResult>(
             success => Ok(),
@@ -52,12 +55,8 @@ public class CategoryController : ApiControllerBase
     [HttpDelete]
     public async Task<ActionResult<bool>> Delete([FromQuery] int accountId)
     {
-        var tokenAccountId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId));
-        if(tokenAccountId != accountId){
-            return BadRequest();
-        }
-
-        var result = await Mediator.Send(new DeleteCategoryCommand(){ Id = accountId });
+        var ownerId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId));
+        var result = await Mediator.Send(new DeleteCategoryCommand(){ Id = accountId, OwnerId = ownerId });
         return result.Match<ActionResult>(
             success => Ok(),
             exception => BadRequest(exception.Message)
