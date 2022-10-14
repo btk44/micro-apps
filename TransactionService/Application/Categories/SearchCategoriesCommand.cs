@@ -32,15 +32,15 @@ public class SearchCategoriesCommandHandler : IRequestHandler<SearchCategoriesCo
                             x.OwnerId == command.OwnerId);
 
         if(!string.IsNullOrEmpty(command.Name)){
-            categoryQuery.Where(x => x.Name.Contains(command.Name));
+            categoryQuery = categoryQuery.Where(x => x.Name.ToLower().Contains(command.Name.ToLower()));
         }
 
         if(command.Id > 0){
-            categoryQuery.Where(x => x.Id == command.Id);
+            categoryQuery = categoryQuery.Where(x => x.Id == command.Id);
         }
 
         if(command.ParentCategoryId > 0){
-            categoryQuery.Where(x => x.ParentCategoryId == command.ParentCategoryId);
+            categoryQuery = categoryQuery.Where(x => x.ParentCategoryId == command.ParentCategoryId);
         }
 
         return await categoryQuery.Select(x => _categoryMapper.Map<CategoryDto>(x)).ToListAsync();
