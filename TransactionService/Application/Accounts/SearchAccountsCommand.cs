@@ -8,7 +8,7 @@ namespace TransactionService.Application.Accounts;
 
 public class SearchAccountsCommand: IRequest<List<AccountDto>> {
     public int OwnerId { get; set; }
-    public List<int> Currencies { get; set; }
+    public int[] Currencies { get; set; }
     public string Name { get; set; }
     public double AmountFrom { get; set; } 
     public double AmountTo { get; set; }
@@ -32,7 +32,8 @@ public class SearchAccountsCommandHandler : IRequestHandler<SearchAccountsComman
         var accountQuery = _dbContext.Accounts
                 .Where(x => x.Active != command.Closed &&
                             x.OwnerId == command.OwnerId && 
-                            x.Amount > command.AmountFrom && x.Amount < command.AmountTo);
+                            x.Amount >= command.AmountFrom && 
+                            x.Amount <= command.AmountTo);
 
         if (command.Currencies.Any()){
             accountQuery.Where(x => command.Currencies.Contains(x.CurrencyId));
