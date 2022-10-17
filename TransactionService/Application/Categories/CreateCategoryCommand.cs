@@ -5,6 +5,7 @@ using TransactionService.Application.Common.Interfaces;
 using TransactionService.Application.Common.Models;
 using TransactionService.Domain.Entities;
 using Shared.Tools;
+using Microsoft.EntityFrameworkCore;
 
 namespace TransactionService.Application.Categories;
 
@@ -34,14 +35,15 @@ public class CreateCategoryCommandHandler: IRequestHandler<CreateCategoryCommand
             return new CategoryValidationException("Incorrect owner id");
         }
 
+        var parentCategory = await _dbContext.Categories.FirstOrDefaultAsync(x => x.Active && x.Id == command.ParentCategoryId);
+
         var categoryEntity = new CategoryEntity(){
             Name = command.Name,
-            ParentCategoryId = command.ParentCategoryId,
-            OwnerId = command.OwnerId
+            OwnerId = command.OwnerId,
+            ParentCategory = parentCategory
         };
 
         _dbContext.Categories.Add(categoryEntity);      
-
         if(await _dbContext.SaveChangesAsync() <= 0){
             return new CategoryValidationException("Save error - please try again");
         }

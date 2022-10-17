@@ -38,6 +38,7 @@ public class SearchTransactionsCommandHandler : IRequestHandler<SearchTransactio
                             x.Amount > command.AmountFrom && x.Amount < command.AmountTo);
 
 
+
         return await transactionQuery.Select(x => _transactionMapper.Map<TransactionDto>(x)).ToListAsync();
     }
 }
