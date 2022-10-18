@@ -35,9 +35,26 @@ public class SearchTransactionsCommandHandler : IRequestHandler<SearchTransactio
         var transactionQuery = _dbContext.Transactions
                 .Where(x => x.Active != command.Removed &&
                             x.OwnerId == command.OwnerId && 
-                            x.Amount > command.AmountFrom && x.Amount < command.AmountTo);
+                            x.Amount >= command.AmountFrom && 
+                            x.Amount <= command.AmountTo && 
+                            x.Date  >= command.DateFrom &&
+                            x.Date <= command.DateTo);
 
+        if( command.TransactionId > 0){
+            transactionQuery = transactionQuery.Where(x => x.Id == command.TransactionId);
+        }
 
+        if(!string.IsNullOrEmpty(command.Payee)){
+            transactionQuery = transactionQuery.Where(x => x.Payee.ToLower().Contains(command.Payee.ToLower()));
+        }
+
+        if(!string.IsNullOrEmpty(command.Comment)){
+            transactionQuery = transactionQuery.Where(x => x.Comment.ToLower().Contains(command.Comment.ToLower()));
+        }
+
+        if(command.Categories.Any()){
+            transactionQuery = transactionQuery.Where(x => command.Categories.Contains(x.CategoryId));
+        }
 
         return await transactionQuery.Select(x => _transactionMapper.Map<TransactionDto>(x)).ToListAsync();
     }
