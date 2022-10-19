@@ -35,7 +35,9 @@ public class CreateTransactionCommandHandler: IRequestHandler<CreateTransactionC
             return new TransactionValidationException("Incorrect owner id");
         }
 
-        var account = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.Active && x.OwnerId == command.OwnerId && x.Id == command.AccountId);
+        var account = await _dbContext.Accounts
+                                .Include(x => x.Transactions.Where(t => t.Active))
+                                .FirstOrDefaultAsync(x => x.Active && x.OwnerId == command.OwnerId && x.Id == command.AccountId);
         if (account == null){
             return new TransactionValidationException("Account does not exist");
         }
@@ -57,7 +59,8 @@ public class CreateTransactionCommandHandler: IRequestHandler<CreateTransactionC
             Comment = command.Comment
         };
 
-        _dbContext.Transactions.Add(transactionEntity);      
+        _dbContext.Transactions.Add(transactionEntity);
+        account.Amount = account.Transactions.Sum(x => x.Amount); // to do : this is not optimal
 
         if(await _dbContext.SaveChangesAsync() <= 0){
             return new TransactionValidationException("Save error - please try again");

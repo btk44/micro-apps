@@ -32,6 +32,8 @@ public class DeleteCategoryCommandHandler: IRequestHandler<DeleteCategoryCommand
             return new CategoryValidationException("Save error - please try again");
         }
 
+        // to do : what to do with all the transactions that are assigned to this category? block category removal if there are any transactinos?
+
         return true;
     }
 }

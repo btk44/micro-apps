@@ -25,6 +25,14 @@ public class DeleteTransactionCommandHandler: IRequestHandler<DeleteTransactionC
             return true;
         }
 
+        var account = await _dbContext.Accounts
+                                .Include(x => x.Transactions.Where(t => t.Active))
+                                .FirstOrDefaultAsync(x => x.Active && x.OwnerId == command.OwnerId && x.Id == transactionEntity.AccountId);
+
+        if(account != null){
+            account.Amount = account.Transactions.Sum(x => x.Amount); // to do : this is not optimal
+        }
+
         transactionEntity.Active = false;
 
         if(await _dbContext.SaveChangesAsync() <= 0){
