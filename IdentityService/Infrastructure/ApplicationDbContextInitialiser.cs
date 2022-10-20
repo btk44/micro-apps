@@ -30,7 +30,7 @@ public class ApplicationDbContextInitialiser{
                     Password = passwordHasher.HashPassword("joe@test.com", "joe")
                 },
                 new AccountEntity(){
-                    Email = "jane2@test.com",
+                    Email = "jane@test.com",
                     Password = passwordHasher.HashPassword("jane@test.com", "jane")
                 }
             );
