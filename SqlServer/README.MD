@@ -9,7 +9,7 @@ docker pull mcr.microsoft.com/mssql/server:2022-latest
 ```
 Then run container by executing command:
 ```
-docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=MyStrongPassw0rd!" -p 1433:1433 --name sql-server --hostname sql-server --network services-network -d mcr.microsoft.com/mssql/server:2022-latest
+docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=MyStrongPassw0rd!" -p 9333:1433 --name sql-server --hostname sql-server --network services-network -d mcr.microsoft.com/mssql/server:2022-latest
 ```
 or running docker compose file:
 ```
