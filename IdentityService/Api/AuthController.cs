@@ -2,8 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using IdentityService.Application.Authorization;
 using IdentityService.Application.Common.Models;
 using Microsoft.AspNetCore.Authorization;
-using Shared.Api;
-using Shared.Constants;
+using IdentityService.Application.Common.Constants;
 
 namespace IdentityService.Api;
 

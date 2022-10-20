@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IdentityService.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220826112241_InitialCreate")]
+    [Migration("20221019132657_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -170,6 +170,52 @@ namespace IdentityService.Infrastructure.Migrations
                     b.ToTable("RefreshTokens");
                 });
 
+            modelBuilder.Entity("IdentityService.Domain.Entities.ResetPasswordTokenEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<DateTime>("Created")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<int>("CreatedBy")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(-1);
+
+                    b.Property<DateTime>("Modified")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("getdate()");
+
+                    b.Property<int>("ModifiedBy")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(-1);
+
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.ToTable("ResetPasswordTokenEntity");
+                });
+
             modelBuilder.Entity("IdentityService.Domain.Entities.FailedAuthInfoEntity", b =>
                 {
                     b.HasOne("IdentityService.Domain.Entities.AccountEntity", "Account")
@@ -192,11 +238,24 @@ namespace IdentityService.Infrastructure.Migrations
                     b.Navigation("Account");
                 });
 
+            modelBuilder.Entity("IdentityService.Domain.Entities.ResetPasswordTokenEntity", b =>
+                {
+                    b.HasOne("IdentityService.Domain.Entities.AccountEntity", "Account")
+                        .WithMany("ResetPasswordTokens")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
             modelBuilder.Entity("IdentityService.Domain.Entities.AccountEntity", b =>
                 {
                     b.Navigation("FailedAuthInfo");
 
                     b.Navigation("RefreshTokens");
+
+                    b.Navigation("ResetPasswordTokens");
                 });
 #pragma warning restore 612, 618
         }

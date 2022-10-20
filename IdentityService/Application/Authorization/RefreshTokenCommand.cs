@@ -4,8 +4,8 @@ using IdentityService.Application.Common.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using IdentityService.Domain.Entities;
-using Shared.Tools;
-using Shared.Constants;
+using IdentityService.Application.Common.Tools;
+using IdentityService.Application.Common.Constants;
 
 namespace IdentityService.Application.Authorization;
 

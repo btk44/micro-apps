@@ -1,5 +1,5 @@
 
-using Shared.Entities;
+using Domain.Entities.Common;
 
 namespace IdentityService.Domain.Entities;
 

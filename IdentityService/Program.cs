@@ -1,8 +1,8 @@
 using IdentityService.Application;
 using IdentityService.Infrastructure;
-using Shared.Api.Middleware;
 using Swashbuckle.AspNetCore.Filters;
 using Microsoft.OpenApi.Models;
+using IdentityService.Api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,11 +27,11 @@ builder.Services.AddSwaggerGen(options => {
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+// if (app.Environment.IsDevelopment())
+// {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

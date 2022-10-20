@@ -1,9 +1,9 @@
 using IdentityService.Application.Common.Exceptions;
 using IdentityService.Application.Common.Interfaces;
+using IdentityService.Application.Common.Tools;
 using IdentityService.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Shared.Tools;
 
 namespace IdentityService.Application.Accounts;
 

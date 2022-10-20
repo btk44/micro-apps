@@ -1,10 +1,10 @@
 using AutoMapper;
 using IdentityService.Application.Common.Exceptions;
 using IdentityService.Application.Common.Interfaces;
+using IdentityService.Application.Common.Tools;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Shared.Tools;
 
 namespace IdentityService.Application.Accounts;
 

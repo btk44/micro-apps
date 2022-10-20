@@ -1,11 +1,11 @@
+using IdentityService.Application.Common.Constants;
 using IdentityService.Application.Common.Exceptions;
 using IdentityService.Application.Common.Interfaces;
 using IdentityService.Application.Common.Models;
+using IdentityService.Application.Common.Tools;
 using IdentityService.Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Shared.Tools;
-using Shared.Constants;
 
 namespace IdentityService.Application.Authorization;
 

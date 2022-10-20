@@ -1,8 +1,8 @@
 using IdentityService.Application.Common.Exceptions;
 using IdentityService.Application.Common.Interfaces;
+using IdentityService.Application.Common.Tools;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Shared.Tools;
 
 public class DeleteAccountCommand: IRequest<Either<bool,AccountValidationException>> {
     // for now we can remove only our account
