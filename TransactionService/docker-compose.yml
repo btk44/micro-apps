@@ -1,0 +1,12 @@
+version: '3.2'
+services:
+  transaction-service:
+    container_name: transaction-service
+    hostname: transaction-service
+    build: .
+    ports:
+      - "7001:80"
+networks:
+  default:
+    name: services-network
+    external: true

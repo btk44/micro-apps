@@ -1,4 +1,4 @@
-using Shared.Entities;
+using TransactionService.Domain.Common.Entities;
 
 namespace TransactionService.Domain.Entities;
 

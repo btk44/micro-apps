@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using Shared.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TransactionService.Application.Common.Interfaces;
+using TransactionService.Domain.Common.Entities;
 using TransactionService.Domain.Entities;
 
 namespace TransactionService.Infrastructure;
@@ -14,10 +15,10 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext{
     protected override void OnModelCreating(ModelBuilder modelBuilder) { 
         base.OnModelCreating(modelBuilder);
 
-        BaseEntityBuilder.Build(modelBuilder.Entity<AccountEntity>());
-        BaseEntityBuilder.Build(modelBuilder.Entity<CurrencyEntity>());
-        BaseEntityBuilder.Build(modelBuilder.Entity<CategoryEntity>());
-        BaseEntityBuilder.Build(modelBuilder.Entity<TransactionEntity>());
+        Build(modelBuilder.Entity<AccountEntity>());
+        Build(modelBuilder.Entity<CurrencyEntity>());
+        Build(modelBuilder.Entity<CategoryEntity>());
+        Build(modelBuilder.Entity<TransactionEntity>());
 
         modelBuilder.Entity<AccountEntity>().HasMany(x => x.Transactions).WithOne(x => x.Account);        
         modelBuilder.Entity<AccountEntity>().HasOne(x => x.Currency);
@@ -26,5 +27,15 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext{
         modelBuilder.Entity<CategoryEntity>().HasOne(x=> x.ParentCategory).WithMany(x=> x.SubCategories).HasForeignKey(x=> x.ParentCategoryId)
             .IsRequired(false).OnDelete(DeleteBehavior.Restrict);
     }    
+
+    private void Build<T>(EntityTypeBuilder<T> entity) where T : BaseEntity
+    {
+        entity.Property(e => e.Id).UseIdentityColumn();
+        entity.Property(e => e.Active).IsRequired().HasDefaultValue(true);
+        entity.Property(e => e.Created).IsRequired().HasDefaultValueSql("getdate()");
+        entity.Property(e => e.CreatedBy).IsRequired().HasDefaultValue(-1);
+        entity.Property(e => e.Modified).IsRequired().HasDefaultValueSql("getdate()").ValueGeneratedOnAddOrUpdate();
+        entity.Property(e => e.ModifiedBy).IsRequired().HasDefaultValue(-1);
+    }
 }
 

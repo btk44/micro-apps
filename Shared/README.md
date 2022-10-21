@@ -1,0 +1,2 @@
+# Shared
+This project is not used by any of the services. This is just to keep shared parts of other services in one place. Can be used to build nuget packages in the future to stop repeating code in services.
