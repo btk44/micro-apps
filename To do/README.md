@@ -13,14 +13,10 @@ Identity service:
 Migrations (run from csproj directory)
 dotnet ef migrations add InitialCreate --output-dir Infrastructure/Migrations 
 
-
 * Claims constant must be shared between services but keeping it 
-* 
 
-* add docker secret and use it in services
 
-```
-printf "private_key" | docker secret create private_key -
-```
+* add docker secret and use it in services !!!
+* fill Identity service docs
  
 

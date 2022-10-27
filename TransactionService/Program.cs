@@ -45,4 +45,9 @@ using(var scope = app.Services.CreateScope()){
     await dbContextInitialiser.Migrate();
 }
 
+var secret = DockerSecretReader.GetSecretOrEnvVar("private_key", builder.Configuration);
+Console.WriteLine("======= DOCKER SECRET =======");
+Console.WriteLine(secret);
+Console.WriteLine("======= DOCKER SECRET =======");
+
 app.Run();

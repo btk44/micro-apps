@@ -1,0 +1,14 @@
+- pull image:
+docker pull mcr.microsoft.com/mssql/server:2022-latest
+
+- swarm init
+docker swarm init
+
+- create network (if not exists)
+docker network create -d overlay services-net
+
+- create docker container with secret access
+docker service create -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=MyStrongPassw0rd!" \
+   -p 9333:1433 --name sql-server --hostname sql-server \
+   --network services-net \
+   mcr.microsoft.com/mssql/server:2022-latest

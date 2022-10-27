@@ -1,0 +1,18 @@
+- build image:
+docker build -t transaction-service-img -f Dockerfile .
+
+- swarm init
+docker swarm init
+
+- create secret (if not exists)
+printf "super secret pass" | docker secret create private_key -
+
+- create network (if not exists)
+docker network create -d overlay services-net
+
+- create docker container with secret access
+docker service create --publish 7001:80 \
+    --secret="private_key" \
+    --network services-net \
+    --name transaction-service --hostname transaction-service \
+    transaction-service-img

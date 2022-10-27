@@ -53,12 +53,6 @@ sudo usermod -aG docker YOUR_USERNAME (you can get it by running 'whoami' comman
 ```
 Now you need to logout and login again to apply the group changes. Now we are good to go.
 
-
-<b>The last thing is to create a custom bridge network for our apps to communicate with each other. Run command:</b>
-```
-docker network create --driver=bridge services-network
-```
-
 ### :small_blue_diamond: Portainer (optional)
 This is not really needed. This good if you want to have visual form of presenting and managing docker containers. 
 
