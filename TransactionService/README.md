@@ -27,7 +27,11 @@ docker swarm init
 Create secret for token private key (if not exists):
 ```
 printf "super secret pass" | docker secret create private_key -
+
+- note that in Windows you'll have to create a file with private key and run
+docker secret create private_key .\secret
 ```
+
 
 Create network (if not exists):
 ```
