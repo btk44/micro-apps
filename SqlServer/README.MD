@@ -31,7 +31,7 @@ Init swarm:
 docker swarm init
 ```
 
-Create network (if not exists):
+Create network (if does not exist):
 ```
 docker network create -d overlay services-net
 ```

@@ -24,16 +24,16 @@ Init swarm:
 docker swarm init
 ```
 
-Create secret for token private key (if not exists):
+Create secret for token private key (if does not exist):
 ```
 printf "super secret pass" | docker secret create private_key -
 
 - note that in Windows you'll have to create a file with private key and run
-docker secret create private_key .\secret
+docker secret create private_key .\secret_file
 ```
 
 
-Create network (if not exists):
+Create network (if does not exist):
 ```
 docker network create -d overlay services-net
 ```

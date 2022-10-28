@@ -13,7 +13,39 @@ docker-compose up -d
 ```
 
 ### :small_blue_diamond: Docker swarm service/container setup:
-to do
+
+Build image:
+```
+docker build -t identity-service-img -f Dockerfile .
+```
+
+Init swarm:
+```
+docker swarm init
+```
+
+Create secret for token private key (if does not exist):
+```
+printf "super secret pass" | docker secret create private_key -
+
+- note that in Windows you'll have to create a file with private key and run
+docker secret create private_key .\secret_file
+```
+
+
+Create network (if does not exist):
+```
+docker network create -d overlay services-net
+```
+
+Create docker container with secret access
+```
+docker service create --publish 7000:80 \
+    --secret="private_key" \
+    --network services-net \
+    --name identity-service --hostname identity-service \
+    identity-service-img
+```
 
 ### :small_blue_diamond: Test the container:
 
