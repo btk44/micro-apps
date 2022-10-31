@@ -17,6 +17,5 @@ dotnet ef migrations add InitialCreate --output-dir Infrastructure/Migrations
 
 
 * add docker secret and use it in services !!!
-* fill Identity service docs
  
 
