@@ -8,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Configuration["test"] = "some value";
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -48,6 +49,7 @@ using(var scope = app.Services.CreateScope()){
 var secret = DockerSecretReader.GetSecretOrEnvVar("private_key", builder.Configuration);
 Console.WriteLine("======= DOCKER SECRET =======");
 Console.WriteLine(secret);
+Console.WriteLine(builder.Configuration["test"]);
 Console.WriteLine("======= DOCKER SECRET =======");
 
 app.Run();
