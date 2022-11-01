@@ -3,4 +3,4 @@ dotnet ef migrations add MIGRATION_NAME --output-dir Infrastructure/Migrations
 
 :: Docker
 docker build -t identity-service -f Dockerfile .
-docker run -d -p 9000:80 --name identity-service identity-service
+docker run -d -p 7000:80 --name identity-service identity-service
