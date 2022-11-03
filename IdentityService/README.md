@@ -53,3 +53,9 @@ Access service api:
 ```
 http://localhost:7000/swagger/index.html
 ```
+### :small_blue_diamond: How to run migrations
+
+After changing entities or relations between them run command (from csproj directory):
+```
+dotnet ef migrations add YourMigrationChangeName --output-dir Infrastructure/Migrations 
+```
