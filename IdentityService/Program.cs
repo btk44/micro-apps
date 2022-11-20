@@ -3,6 +3,7 @@ using IdentityService.Infrastructure;
 using Swashbuckle.AspNetCore.Filters;
 using Microsoft.OpenApi.Models;
 using IdentityService.Api.Middleware;
+using IdentityService.Domain.Messages;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,21 @@ builder.Services.AddSwaggerGen(options => {
     });
  
     options.OperationFilter<SecurityRequirementsOperationFilter>();
+});
+
+builder.Host.UseNServiceBus(context =>
+{
+    var endpointConfiguration = new EndpointConfiguration("IdentityService");
+    var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
+    transport.UseConventionalRoutingTopology(QueueType.Quorum);
+
+    transport.Routing().RouteToEndpoint(
+            assembly: typeof(AccountCreatedMessage).Assembly,
+            destination: "DontKnowYet");
+
+    endpointConfiguration.SendOnly();
+
+    return endpointConfiguration;
 });
 
 var app = builder.Build();
