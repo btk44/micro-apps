@@ -5,4 +5,5 @@ Identity service:
 
 * Claims constant must be shared between services but keeping it 
 * implement Nservicebus with rabbitmq for communication
+* add simple console app to receive test messages
 
