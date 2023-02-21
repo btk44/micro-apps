@@ -37,6 +37,7 @@ public class CreateTransactionCommandHandler: IRequestHandler<CreateTransactionC
 
         var account = await _dbContext.Accounts
                                 .Include(x => x.Transactions.Where(t => t.Active))
+                                .Include(x => x.AdditionalInfo)
                                 .FirstOrDefaultAsync(x => x.Active && x.OwnerId == command.OwnerId && x.Id == command.AccountId);
         if (account == null){
             return new TransactionValidationException("Account does not exist");
@@ -53,14 +54,16 @@ public class CreateTransactionCommandHandler: IRequestHandler<CreateTransactionC
             Account = account,
             AccountId = account.Id,
             Amount = command.Amount,
-            Payee = command.Payee,
             Category = category,
             CategoryId = category.Id,
-            Comment = command.Comment
+            AdditionalInfo = new TransactionAdditionalInfoEntity(){
+                Payee = command.Payee,
+                Comment = command.Comment
+            }
         };
 
         _dbContext.Transactions.Add(transactionEntity);
-        account.Amount = account.Transactions.Sum(x => x.Amount); // to do : this is not optimal
+        account.AdditionalInfo.Amount = account.Transactions.Sum(x => x.Amount); // to do : this is not optimal
 
         if(await _dbContext.SaveChangesAsync() <= 0){
             return new TransactionValidationException("Save error - please try again");

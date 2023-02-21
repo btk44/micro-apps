@@ -10,4 +10,5 @@ public class AccountEntity: BaseEntity {
     // navigation props
     public CurrencyEntity Currency { get; set; }
     public ICollection<TransactionEntity> Transactions { get; set; }
+    public AccountAdditionalInfoEntity AdditionalInfo { get; set; }
 }

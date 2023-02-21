@@ -12,7 +12,7 @@ using TransactionService.Infrastructure;
 namespace TransactionService.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20221017105206_InitialCreate")]
+    [Migration("20230220130012_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -23,6 +23,129 @@ namespace TransactionService.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("AccountAdditionalInfoEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Modified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId")
+                        .IsUnique();
+
+                    b.ToTable("AccountAdditionalInfoEntity");
+                });
+
+            modelBuilder.Entity("CategoryGroup", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Modified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CategoryGroup");
+                });
+
+            modelBuilder.Entity("TransactionAdditionalInfoEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Modified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Payee")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TransactionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TransactionId")
+                        .IsUnique();
+
+                    b.ToTable("TransactionAdditionalInfoEntity");
+                });
+
+            modelBuilder.Entity("TransactionEntityTransactionEntity", b =>
+                {
+                    b.Property<int>("ConnectedTransactionsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TransactionsImConnectedToId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ConnectedTransactionsId", "TransactionsImConnectedToId");
+
+                    b.HasIndex("TransactionsImConnectedToId");
+
+                    b.ToTable("TransactionEntityTransactionEntity");
+                });
 
             modelBuilder.Entity("TransactionService.Domain.Entities.AccountEntity", b =>
                 {
@@ -36,9 +159,6 @@ namespace TransactionService.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
-
-                    b.Property<double>("Amount")
-                        .HasColumnType("float");
 
                     b.Property<DateTime>("Created")
                         .ValueGeneratedOnAdd()
@@ -89,6 +209,9 @@ namespace TransactionService.Infrastructure.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(true);
 
+                    b.Property<int>("CategoryGroupId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("Created")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -119,6 +242,8 @@ namespace TransactionService.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryGroupId");
 
                     b.HasIndex("ParentCategoryId");
 
@@ -191,9 +316,6 @@ namespace TransactionService.Infrastructure.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Comment")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("Created")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -220,9 +342,6 @@ namespace TransactionService.Infrastructure.Migrations
                     b.Property<int>("OwnerId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Payee")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
@@ -230,6 +349,43 @@ namespace TransactionService.Infrastructure.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Transactions");
+                });
+
+            modelBuilder.Entity("AccountAdditionalInfoEntity", b =>
+                {
+                    b.HasOne("TransactionService.Domain.Entities.AccountEntity", "Account")
+                        .WithOne("AdditionalInfo")
+                        .HasForeignKey("AccountAdditionalInfoEntity", "AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
+            modelBuilder.Entity("TransactionAdditionalInfoEntity", b =>
+                {
+                    b.HasOne("TransactionService.Domain.Entities.TransactionEntity", "Transaction")
+                        .WithOne("AdditionalInfo")
+                        .HasForeignKey("TransactionAdditionalInfoEntity", "TransactionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Transaction");
+                });
+
+            modelBuilder.Entity("TransactionEntityTransactionEntity", b =>
+                {
+                    b.HasOne("TransactionService.Domain.Entities.TransactionEntity", null)
+                        .WithMany()
+                        .HasForeignKey("ConnectedTransactionsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TransactionService.Domain.Entities.TransactionEntity", null)
+                        .WithMany()
+                        .HasForeignKey("TransactionsImConnectedToId")
+                        .OnDelete(DeleteBehavior.ClientCascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("TransactionService.Domain.Entities.AccountEntity", b =>
@@ -245,10 +401,18 @@ namespace TransactionService.Infrastructure.Migrations
 
             modelBuilder.Entity("TransactionService.Domain.Entities.CategoryEntity", b =>
                 {
+                    b.HasOne("CategoryGroup", "Group")
+                        .WithMany("Categories")
+                        .HasForeignKey("CategoryGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("TransactionService.Domain.Entities.CategoryEntity", "ParentCategory")
                         .WithMany("SubCategories")
                         .HasForeignKey("ParentCategoryId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Group");
 
                     b.Navigation("ParentCategory");
                 });
@@ -272,14 +436,26 @@ namespace TransactionService.Infrastructure.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("CategoryGroup", b =>
+                {
+                    b.Navigation("Categories");
+                });
+
             modelBuilder.Entity("TransactionService.Domain.Entities.AccountEntity", b =>
                 {
+                    b.Navigation("AdditionalInfo");
+
                     b.Navigation("Transactions");
                 });
 
             modelBuilder.Entity("TransactionService.Domain.Entities.CategoryEntity", b =>
                 {
                     b.Navigation("SubCategories");
+                });
+
+            modelBuilder.Entity("TransactionService.Domain.Entities.TransactionEntity", b =>
+                {
+                    b.Navigation("AdditionalInfo");
                 });
 #pragma warning restore 612, 618
         }

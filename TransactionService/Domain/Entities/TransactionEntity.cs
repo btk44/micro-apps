@@ -13,5 +13,7 @@ public class TransactionEntity: BaseEntity {
     public AccountEntity Account { get; set; }
     public CategoryEntity Category { get; set; }
     public TransactionAdditionalInfoEntity AdditionalInfo { get; set;}
+    public ICollection<TransactionEntity> ConnectedTransactions { get; set; }
+    public ICollection<TransactionEntity> TransactionsImConnectedTo { get; set; }
 
 }

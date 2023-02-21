@@ -34,6 +34,7 @@ public class UpdateTransactionCommandHandler: IRequestHandler<UpdateTransactionC
 
         var account = await _dbContext.Accounts
                                 .Include(x => x.Transactions.Where(t => t.Active))
+                                .Include(x => x.AdditionalInfo)
                                 .FirstOrDefaultAsync(x => x.Active && x.OwnerId == command.OwnerId && x.Id == command.AccountId);
         if (account == null){
             return new TransactionValidationException("Account does not exist");
@@ -44,7 +45,9 @@ public class UpdateTransactionCommandHandler: IRequestHandler<UpdateTransactionC
             return new TransactionValidationException("Category does not exist");
         }
 
-        var transactionEntity = await _dbContext.Transactions.FirstOrDefaultAsync(x => x.Active && x.OwnerId == command.OwnerId && x.Id == command.Id);
+        var transactionEntity = await _dbContext.Transactions
+                                                .Include(x => x.AdditionalInfo)
+                                                .FirstOrDefaultAsync(x => x.Active && x.OwnerId == command.OwnerId && x.Id == command.Id);
 
         if(transactionEntity == null){
             return new TransactionValidationException("Transaction does not exist");
@@ -55,12 +58,12 @@ public class UpdateTransactionCommandHandler: IRequestHandler<UpdateTransactionC
         transactionEntity.Account = account;
         transactionEntity.AccountId = account.Id;
         transactionEntity.Amount = command.Amount;
-        transactionEntity.Payee = command.Payee;
+        transactionEntity.AdditionalInfo.Payee = command.Payee;
         transactionEntity.Category = category;
         transactionEntity.CategoryId = category.Id;
-        transactionEntity.Comment = command.Comment;  
+        transactionEntity.AdditionalInfo.Comment = command.Comment;  
 
-        account.Amount = account.Transactions.Sum(x => x.Amount); // to do : this is not optimal
+        account.AdditionalInfo.Amount = account.Transactions.Sum(x => x.Amount); // to do : this is not optimal
 
         if(await _dbContext.SaveChangesAsync() <= 0){
             return new TransactionValidationException("Save error - please try again");

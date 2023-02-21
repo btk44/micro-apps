@@ -33,6 +33,7 @@ public class SearchTransactionsCommandHandler : IRequestHandler<SearchTransactio
     public async Task<List<TransactionDto>> Handle(SearchTransactionsCommand command, CancellationToken cancellationToken)
     {
         var transactionQuery = _dbContext.Transactions
+                .Include(x => x.AdditionalInfo)
                 .Where(x => x.Active != command.Removed &&
                             x.OwnerId == command.OwnerId && 
                             x.Amount >= command.AmountFrom && 
@@ -45,11 +46,11 @@ public class SearchTransactionsCommandHandler : IRequestHandler<SearchTransactio
         }
 
         if(!string.IsNullOrEmpty(command.Payee)){
-            transactionQuery = transactionQuery.Where(x => x.Payee.ToLower().Contains(command.Payee.ToLower()));
+            transactionQuery = transactionQuery.Where(x => x.AdditionalInfo.Payee.ToLower().Contains(command.Payee.ToLower()));
         }
 
         if(!string.IsNullOrEmpty(command.Comment)){
-            transactionQuery = transactionQuery.Where(x => x.Comment.ToLower().Contains(command.Comment.ToLower()));
+            transactionQuery = transactionQuery.Where(x => x.AdditionalInfo.Comment.ToLower().Contains(command.Comment.ToLower()));
         }
 
         if(command.Categories.Any()){

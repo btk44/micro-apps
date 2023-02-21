@@ -22,10 +22,14 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext{
 
         modelBuilder.Entity<AccountEntity>().HasMany(x => x.Transactions).WithOne(x => x.Account);        
         modelBuilder.Entity<AccountEntity>().HasOne(x => x.Currency);
+        modelBuilder.Entity<AccountAdditionalInfoEntity>().HasOne(x => x.Account);
         modelBuilder.Entity<TransactionEntity>().HasOne(x => x.Account).WithMany(x => x.Transactions);
         modelBuilder.Entity<TransactionEntity>().HasOne(x => x.Category);
+        modelBuilder.Entity<TransactionAdditionalInfoEntity>().HasOne(x => x.Transaction);
+        modelBuilder.Entity<TransactionEntity>().HasMany(x => x.ConnectedTransactions).WithMany(x => x.TransactionsImConnectedTo);
         modelBuilder.Entity<CategoryEntity>().HasOne(x=> x.ParentCategory).WithMany(x=> x.SubCategories).HasForeignKey(x=> x.ParentCategoryId)
             .IsRequired(false).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<CategoryEntity>().HasOne(x => x.Group).WithMany(x => x.Categories);
     }    
 
     private void Build<T>(EntityTypeBuilder<T> entity) where T : BaseEntity

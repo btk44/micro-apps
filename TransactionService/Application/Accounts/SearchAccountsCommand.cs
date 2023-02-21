@@ -31,9 +31,7 @@ public class SearchAccountsCommandHandler : IRequestHandler<SearchAccountsComman
     {
         var accountQuery = _dbContext.Accounts
                                     .Where(x => x.Active != command.Closed &&
-                                                x.OwnerId == command.OwnerId && 
-                                                x.Amount >= command.AmountFrom && 
-                                                x.Amount <= command.AmountTo);
+                                                x.OwnerId == command.OwnerId);
 
         if (command.Currencies.Any()){
             accountQuery = accountQuery.Where(x => command.Currencies.Contains(x.CurrencyId));

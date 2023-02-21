@@ -43,7 +43,6 @@ public class CreateAccountCommandHandler: IRequestHandler<CreateAccountCommand, 
 
         var accountEntity = new AccountEntity(){
             Name = command.Name,
-            Amount = 0,
             OwnerId = command.OwnerId,
             CurrencyId = command.CurrencyId
         };
