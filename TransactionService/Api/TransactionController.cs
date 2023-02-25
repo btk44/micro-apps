@@ -40,6 +40,18 @@ public class TransactionController : ApiControllerBase
         );
     }
 
+    [HttpPost("multiple")]
+    public async Task<ActionResult<TransactionDto>> CreateMany([FromBody] CreateTransactionCommand command)
+    {
+        // possible upgrade: unlock creating objects for other owners
+        command.OwnerId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId));
+        var result = await Mediator.Send(command);
+        return result.Match<ActionResult>(
+            transaction => Ok(transaction),
+            exception => BadRequest(exception.Message)
+        );
+    }
+
     [HttpPut]
     public async Task<ActionResult<bool>> Update([FromBody] UpdateTransactionCommand command)
     {
