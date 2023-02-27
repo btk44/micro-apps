@@ -11,6 +11,7 @@ namespace TransactionService.Application.Transactions;
 
 public class CreateTransactionCommand: IRequest<Either<TransactionDto, TransactionValidationException>> {
     public int OwnerId { get; set; }
+    public int Id { get; set; }
     public DateTime Date { get; set; }
     public int AccountId { get; set; }
     public double Amount { get; set; }

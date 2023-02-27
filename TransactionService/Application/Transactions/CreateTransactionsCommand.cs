@@ -29,6 +29,87 @@ public class CreateTransactionsCommandHandler: IRequestHandler<CreateTransaction
             return new TransactionValidationException("Incorrect owner id");
         }
 
-        return new TransactionValidationException("test");
+        var accountIdList = command.Transactions.Select(x => x.AccountId).Distinct();
+        var categoryIdList = command.Transactions.Select(x => x.CategoryId).Distinct();
+        var transactionIdList = command.Transactions.Where(x => x.Id > 0).Select(x => x.Id);
+
+        var accounts = await _dbContext.Accounts
+                                    .Include(x => x.AdditionalInfo)
+                                    .Where(x => x.Active && accountIdList.Contains(x.Id))
+                                    .ToDictionaryAsync(x => x.Id);
+
+        var categories = await _dbContext.Categories
+                                    .Where(x => x.Active && categoryIdList.Contains(x.Id))
+                                    .ToDictionaryAsync(x => x.Id);
+
+        var existingTransactions = await _dbContext.Transactions
+                                    .Where(x => x.Active && transactionIdList.Contains(x.Id))
+                                    .ToListAsync();
+
+        var missingTransactions = transactionIdList.Except(existingTransactions.Select(x => x.Id)).ToList();
+
+        if(missingTransactions.Any()){
+            return new TransactionValidationException($"Missing transactions: {string.Join(", ", missingTransactions)}");
+        }
+
+        var processedEntities = new List<TransactionEntity>();
+
+        foreach(var commandTransaction in command.Transactions){
+            AccountEntity account;
+            CategoryEntity category;
+
+            if(!accounts.TryGetValue(commandTransaction.AccountId, out account)){
+                return new TransactionValidationException($"Account does not exist for transaction: {commandTransaction.Id}");
+            }
+
+            if(!categories.TryGetValue(commandTransaction.CategoryId, out category)){
+                return new TransactionValidationException($"Category does not exist for transaction: {commandTransaction.Id}");
+            }
+
+            if(commandTransaction.OwnerId != account.OwnerId){
+                return new TransactionValidationException($"Owner id between account and transaction does not match for transaction: {commandTransaction.Id}");
+            }
+
+            if(commandTransaction.OwnerId != category.OwnerId){
+                return new TransactionValidationException($"Owner id between category and transaction does not match for transaction: {commandTransaction.Id}");
+            }
+
+            TransactionEntity transactionEntity = existingTransactions.FirstOrDefault(x => x.Id == commandTransaction.Id);
+
+            if (transactionEntity != null){
+                transactionEntity.Date = commandTransaction.Date;
+                transactionEntity.AccountId = commandTransaction.AccountId;
+                transactionEntity.Account = account;
+                transactionEntity.Category = category;
+                transactionEntity.CategoryId = commandTransaction.CategoryId;
+                transactionEntity.AdditionalInfo.Payee = commandTransaction.Payee;
+                transactionEntity.AdditionalInfo.Comment = commandTransaction.Comment;
+            } 
+            else {
+                transactionEntity = new TransactionEntity(){ // to do: consider mapping
+                    OwnerId = commandTransaction.OwnerId,
+                    Date = commandTransaction.Date,
+                    Account = account,
+                    AccountId = account.Id,
+                    Amount = commandTransaction.Amount,
+                    Category = category,
+                    CategoryId = category.Id,
+                    AdditionalInfo = new TransactionAdditionalInfoEntity(){
+                        Payee = commandTransaction.Payee,
+                        Comment = commandTransaction.Comment
+                    }
+                };
+
+                _dbContext.Transactions.Add(transactionEntity);
+            }
+
+            processedEntities.Add(transactionEntity);
+        }
+
+        if(await _dbContext.SaveChangesAsync() <= 0){
+            return new TransactionValidationException("Save error - please try again");
+        }
+
+        return processedEntities.Select(x => _transactionMapper.Map<TransactionDto>(x)).ToList();  
     }
 }
