@@ -8,12 +8,10 @@ public class TransactionEntity: BaseEntity {
     public int AccountId { get; set; }
     public double Amount { get; set; }
     public int CategoryId { get; set; }
+    public string GroupKey { get; set; }
 
     // navigation props
     public AccountEntity Account { get; set; }
     public CategoryEntity Category { get; set; }
     public TransactionAdditionalInfoEntity AdditionalInfo { get; set;}
-    public ICollection<TransactionEntity> ConnectedTransactions { get; set; }
-    public ICollection<TransactionEntity> TransactionsImConnectedTo { get; set; }
-
 }

@@ -141,6 +141,7 @@ namespace TransactionService.Infrastructure.Migrations
                     AccountId = table.Column<int>(type: "int", nullable: false),
                     Amount = table.Column<double>(type: "float", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
+                    GroupKey = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
                     CreatedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
                     Modified = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
@@ -190,29 +191,6 @@ namespace TransactionService.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "TransactionEntityTransactionEntity",
-                columns: table => new
-                {
-                    ConnectedTransactionsId = table.Column<int>(type: "int", nullable: false),
-                    TransactionsImConnectedToId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TransactionEntityTransactionEntity", x => new { x.ConnectedTransactionsId, x.TransactionsImConnectedToId });
-                    table.ForeignKey(
-                        name: "FK_TransactionEntityTransactionEntity_Transactions_ConnectedTransactionsId",
-                        column: x => x.ConnectedTransactionsId,
-                        principalTable: "Transactions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_TransactionEntityTransactionEntity_Transactions_TransactionsImConnectedToId",
-                        column: x => x.TransactionsImConnectedToId,
-                        principalTable: "Transactions",
-                        principalColumn: "Id");
-                });
-
             migrationBuilder.CreateIndex(
                 name: "IX_AccountAdditionalInfoEntity_AccountId",
                 table: "AccountAdditionalInfoEntity",
@@ -241,11 +219,6 @@ namespace TransactionService.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_TransactionEntityTransactionEntity_TransactionsImConnectedToId",
-                table: "TransactionEntityTransactionEntity",
-                column: "TransactionsImConnectedToId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Transactions_AccountId",
                 table: "Transactions",
                 column: "AccountId");
@@ -263,9 +236,6 @@ namespace TransactionService.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "TransactionAdditionalInfoEntity");
-
-            migrationBuilder.DropTable(
-                name: "TransactionEntityTransactionEntity");
 
             migrationBuilder.DropTable(
                 name: "Transactions");

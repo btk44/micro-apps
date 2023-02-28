@@ -84,6 +84,7 @@ public class CreateTransactionsCommandHandler: IRequestHandler<CreateTransaction
                 transactionEntity.CategoryId = commandTransaction.CategoryId;
                 transactionEntity.AdditionalInfo.Payee = commandTransaction.Payee;
                 transactionEntity.AdditionalInfo.Comment = commandTransaction.Comment;
+                transactionEntity.GroupKey = commandTransaction.GroupKey;
             } 
             else {
                 transactionEntity = new TransactionEntity(){ // to do: consider mapping
@@ -97,7 +98,8 @@ public class CreateTransactionsCommandHandler: IRequestHandler<CreateTransaction
                     AdditionalInfo = new TransactionAdditionalInfoEntity(){
                         Payee = commandTransaction.Payee,
                         Comment = commandTransaction.Comment
-                    }
+                    },
+                    GroupKey = commandTransaction.GroupKey
                 };
 
                 _dbContext.Transactions.Add(transactionEntity);

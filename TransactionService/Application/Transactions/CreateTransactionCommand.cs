@@ -18,6 +18,7 @@ public class CreateTransactionCommand: IRequest<Either<TransactionDto, Transacti
     public string Payee { get; set; }
     public int CategoryId { get; set; }
     public string Comment { get; set; }
+    public string GroupKey { get; set; }
 }
 
 public class CreateTransactionCommandHandler: IRequestHandler<CreateTransactionCommand, Either<TransactionDto, TransactionValidationException>> {

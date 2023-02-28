@@ -130,21 +130,6 @@ namespace TransactionService.Infrastructure.Migrations
                     b.ToTable("TransactionAdditionalInfoEntity");
                 });
 
-            modelBuilder.Entity("TransactionEntityTransactionEntity", b =>
-                {
-                    b.Property<int>("ConnectedTransactionsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TransactionsImConnectedToId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ConnectedTransactionsId", "TransactionsImConnectedToId");
-
-                    b.HasIndex("TransactionsImConnectedToId");
-
-                    b.ToTable("TransactionEntityTransactionEntity");
-                });
-
             modelBuilder.Entity("TransactionService.Domain.Entities.AccountEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -327,6 +312,9 @@ namespace TransactionService.Infrastructure.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("GroupKey")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("Modified")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2")
@@ -369,21 +357,6 @@ namespace TransactionService.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Transaction");
-                });
-
-            modelBuilder.Entity("TransactionEntityTransactionEntity", b =>
-                {
-                    b.HasOne("TransactionService.Domain.Entities.TransactionEntity", null)
-                        .WithMany()
-                        .HasForeignKey("ConnectedTransactionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TransactionService.Domain.Entities.TransactionEntity", null)
-                        .WithMany()
-                        .HasForeignKey("TransactionsImConnectedToId")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("TransactionService.Domain.Entities.AccountEntity", b =>
