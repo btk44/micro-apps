@@ -40,11 +40,11 @@ public class TransactionController : ApiControllerBase
         );
     }
 
-    [HttpPost("multiple")]
-    public async Task<ActionResult<TransactionDto>> CreateMany([FromBody] CreateTransactionCommand command)
+    [HttpPost("process")]
+    public async Task<ActionResult<TransactionDto>> ProcessTransactions([FromBody] ProcessTransactionsCommand command)
     {
         // possible upgrade: unlock creating objects for other owners
-        command.OwnerId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId));
+        command.ProcessingUserId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId));
         var result = await Mediator.Send(command);
         return result.Match<ActionResult>(
             transaction => Ok(transaction),

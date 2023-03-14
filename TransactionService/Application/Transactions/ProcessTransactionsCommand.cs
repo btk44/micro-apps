@@ -9,7 +9,7 @@ using TransactionService.Domain.Entities;
 
 namespace TransactionService.Application.Transactions;
 
-public class TransactionAction {
+public class Transaction {
     public int OwnerId { get; set; }
     public int Id { get; set; }
     public DateTime Date { get; set; }
@@ -23,7 +23,8 @@ public class TransactionAction {
 }
 
 public class ProcessTransactionsCommand: IRequest<Either<List<TransactionDto>, TransactionValidationException>> {
-    public List<TransactionAction> Transactions { get; set; }
+    public int ProcessingUserId { get; set; }
+    public List<Transaction> Transactions { get; set; }
 }
 
 public class ProcessTransactionsCommandHandler: IRequestHandler<ProcessTransactionsCommand, Either<List<TransactionDto>, TransactionValidationException>> {
