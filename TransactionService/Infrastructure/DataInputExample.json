@@ -1,0 +1,203 @@
+[
+{
+  "ownerId": 1,
+  "name": "Bank1",
+  "currencyId": 2,
+  "amount": 0,
+  "id": 0,
+  "deleted": false
+},
+{
+  "ownerId": 1,
+  "name": "Bank X",
+  "currencyId": 2,
+  "amount": 0,
+  "id": 0,
+  "deleted": false
+},
+{
+  "ownerId": 1,
+  "name": "IBS",
+  "currencyId": 2,
+  "amount": 100,
+  "id": 0,
+  "deleted": false
+},
+{
+  "ownerId": 1,
+  "name": "Interactive Bankers",
+  "currencyId": 2,
+  "amount": 100,
+  "id": 0,
+  "deleted": true
+},
+{
+  "ownerId": 1,
+  "name": "Finax CHF",
+  "currencyId": 7,
+  "amount": 0,
+  "id": 0,
+  "deleted": false
+},
+{
+  "ownerId": 1,
+  "name": "Alior USD",
+  "currencyId": 1,
+  "amount": 200,
+  "id": 0,
+  "deleted": false
+}
+]
+
+
+[
+{
+  "ownerId": 1,
+  "id": 0,
+  "name": "Food",
+  "parentCategoryId": 0,
+  "subCategories": [
+    {
+	  "ownerId": 1,
+	  "id": 0,
+	  "name": "Grocery",
+	  "parentCategoryId": 0,
+	  "subCategories": [ ],
+	  "deleted": false
+	},
+    {
+	  "ownerId": 1,
+	  "id": 0,
+	  "name": "Restaurants",
+	  "parentCategoryId": 0,
+	  "subCategories": [ ],
+	  "deleted": false
+	}
+  ],
+  "deleted": false
+},
+{
+  "ownerId": 1,
+  "id": 0,
+  "name": "Other Bills",
+  "parentCategoryId": 0,
+  "subCategories": [
+    {
+	  "ownerId": 1,
+	  "id": 0,
+	  "name": "Home",
+	  "parentCategoryId": 0,
+	  "subCategories": [ 
+		{
+		  "ownerId": 1,
+		  "id": 0,
+		  "name": "Electricity",
+		  "parentCategoryId": 0,
+		  "subCategories": [ ],
+		  "deleted": false
+		},
+		{
+		  "ownerId": 1,
+		  "id": 0,
+		  "name": "Water",
+		  "parentCategoryId": 0,
+		  "subCategories": [ ],
+		  "deleted": false
+		}
+	  ],
+	  "deleted": false
+	},
+    {
+	  "ownerId": 1,
+	  "id": 0,
+	  "name": "Kids",
+	  "parentCategoryId": 0,
+	  "subCategories": [ ],
+	  "deleted": false
+	},
+	{
+	  "ownerId": 1,
+	  "id": 0,
+	  "name": "Other",
+	  "parentCategoryId": 0,
+	  "subCategories": [ ],
+	  "deleted": false
+	}
+  ],
+  "deleted": false
+},
+{
+  "ownerId": 1,
+  "id": 0,
+  "name": "Transport",
+  "parentCategoryId": 0,
+  "subCategories": [
+    {
+	  "ownerId": 1,
+	  "id": 0,
+	  "name": "Car stuff",
+	  "parentCategoryId": 0,
+	  "subCategories": [ ],
+	  "deleted": false
+	},
+    {
+	  "ownerId": 1,
+	  "id": 0,
+	  "name": "Fuel",
+	  "parentCategoryId": 0,
+	  "subCategories": [ ],
+	  "deleted": false
+	},
+    {
+	  "ownerId": 1,
+	  "id": 0,
+	  "name": "Tickets",
+	  "parentCategoryId": 0,
+	  "subCategories": [ ],
+	  "deleted": false
+	}
+  ],
+  "deleted": false
+},
+{
+  "ownerId": 1,
+  "id": 0,
+  "name": "Transfer",
+  "parentCategoryId": 0,
+  "subCategories": [],
+  "deleted": false
+},
+{
+  "ownerId": 1,
+  "id": 0,
+  "name": "Whatever",
+  "parentCategoryId": 0,
+  "subCategories": [
+    {
+	  "ownerId": 1,
+	  "id": 0,
+	  "name": "Something",
+	  "parentCategoryId": 0,
+	  "subCategories": [ ],
+	  "deleted": false
+	},
+    {
+	  "ownerId": 1,
+	  "id": 0,
+	  "name": "Other",
+	  "parentCategoryId": 0,
+	  "subCategories": [ ],
+	  "deleted": false
+	},
+    {
+	  "ownerId": 1,
+	  "id": 0,
+	  "name": "Whatever else",
+	  "parentCategoryId": 0,
+	  "subCategories": [ ],
+	  "deleted": false
+	}
+  ],
+  "deleted": true
+},
+]

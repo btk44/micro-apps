@@ -17,7 +17,7 @@ public class ApplicationDbContextInitialiser{
     }
 
     private async Task InsertData(){
-        if(!_dbContext.Accounts.Any()){
+        if(!_dbContext.Currencies.Any()){
             Console.WriteLine("=== Inserting currency data ===");
 
             var currencies = new List<CurrencyEntity>() {

@@ -29,37 +29,14 @@ public class AccountController : ApiControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<AccountDto>> Create([FromBody] CreateAccountCommand command)
+    public async Task<ActionResult<List<AccountDto>>> Create([FromBody] ProcessAccountsCommand command)
     {
         // possible upgrade: unlock creating objects for other owners
-        command.OwnerId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId));
+        command.ProcessingUserId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId));
         var result = await Mediator.Send(command);
         return result.Match<ActionResult>(
             account => Ok(account),
             exception => BadRequest(exception.Message)
         );
-    }
-
-    [HttpPut]
-    public async Task<ActionResult<bool>> Update([FromBody] UpdateAccountCommand command)
-    {
-        // possible upgrade: unlock update objects for other owners
-        command.OwnerId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId));
-        var result = await Mediator.Send(command);
-        return result.Match<ActionResult>(
-            success => Ok(),
-            exception => BadRequest(exception.Message)
-        );
-    }
-
-    [HttpDelete]
-    public async Task<ActionResult<bool>> Delete([FromQuery] int accountId)
-    {
-        var ownerId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId));
-        var result = await Mediator.Send(new DeleteAccountCommand(){ Id = accountId, OwnerId = ownerId });
-        return result.Match<ActionResult>(
-            success => Ok(),
-            exception => BadRequest(exception.Message)
-        );
-    }    
+    } 
 }

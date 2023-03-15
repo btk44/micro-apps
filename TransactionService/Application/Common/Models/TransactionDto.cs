@@ -9,4 +9,6 @@ public class TransactionDto {
     public string Payee { get; set; }
     public int CategoryId { get; set; }
     public string Comment { get; set; }
+    public string GroupKey { get; set; }
+    public bool Deleted { get; set; }
 }

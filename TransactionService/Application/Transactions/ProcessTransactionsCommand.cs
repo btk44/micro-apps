@@ -9,22 +9,9 @@ using TransactionService.Domain.Entities;
 
 namespace TransactionService.Application.Transactions;
 
-public class Transaction {
-    public int OwnerId { get; set; }
-    public int Id { get; set; }
-    public DateTime Date { get; set; }
-    public int AccountId { get; set; }
-    public double Amount { get; set; }
-    public string Payee { get; set; }
-    public int CategoryId { get; set; }
-    public string Comment { get; set; }
-    public string GroupKey { get; set; }
-    public bool Deleted { get; set; }
-}
-
 public class ProcessTransactionsCommand: IRequest<Either<List<TransactionDto>, TransactionValidationException>> {
     public int ProcessingUserId { get; set; }
-    public List<Transaction> Transactions { get; set; }
+    public List<TransactionDto> Transactions { get; set; }
 }
 
 public class ProcessTransactionsCommandHandler: IRequestHandler<ProcessTransactionsCommand, Either<List<TransactionDto>, TransactionValidationException>> {
@@ -48,9 +35,11 @@ public class ProcessTransactionsCommandHandler: IRequestHandler<ProcessTransacti
         var categoryIdList = command.Transactions.Select(x => x.CategoryId).Distinct();
         var transactionIdList = command.Transactions.Where(x => x.Id > 0).Select(x => x.Id);
 
+        // check if currency exist and consider processing inactive
+
         var accounts = await _dbContext.Accounts
                                     .Include(x => x.AdditionalInfo)
-                                    .Where(x => x.Active && accountIdList.Contains(x.Id))
+                                    .Where(x => x.Active && accountIdList.Contains(x.Id)) // to do: active? maybe not?
                                     .ToDictionaryAsync(x => x.Id);
 
         var categories = await _dbContext.Categories
@@ -61,7 +50,8 @@ public class ProcessTransactionsCommandHandler: IRequestHandler<ProcessTransacti
                                     .Where(x => x.Active && transactionIdList.Contains(x.Id))
                                     .ToListAsync();
 
-        var missingTransactions = transactionIdList.Except(existingTransactions.Select(x => x.Id)).ToList();
+        var existingTransactionIds = existingTransactions.Select(x => x.Id);
+        var missingTransactions = transactionIdList.Except(existingTransactionIds).ToList();
 
         if(missingTransactions.Any()){
             return new TransactionValidationException($"Missing transactions: { string.Join(", ", missingTransactions) }");
@@ -90,46 +80,16 @@ public class ProcessTransactionsCommandHandler: IRequestHandler<ProcessTransacti
             }
 
             TransactionEntity transactionEntity = existingTransactions.FirstOrDefault(x => x.Id == commandTransaction.Id);
-
-            if (transactionEntity != null){
-                if(commandTransaction.Deleted){
-                    _dbContext.Transactions.Remove(transactionEntity);
-                } 
-                else {
-                    transactionEntity.Date = commandTransaction.Date;
-                    transactionEntity.AccountId = commandTransaction.AccountId;
-                    transactionEntity.Account = account;
-                    transactionEntity.Category = category;
-                    transactionEntity.CategoryId = commandTransaction.CategoryId;
-                    transactionEntity.AdditionalInfo.Payee = commandTransaction.Payee;
-                    transactionEntity.AdditionalInfo.Comment = commandTransaction.Comment;
-                    transactionEntity.GroupKey = commandTransaction.GroupKey;
-                }
+            if (transactionEntity == null){
+                transactionEntity = new TransactionEntity();
+                _dbContext.Transactions.Add(transactionEntity);  // will that work?
             } 
-            else {
-                if(!commandTransaction.Deleted){              
-                    transactionEntity = new TransactionEntity(){ // to do: consider mapping
-                        OwnerId = commandTransaction.OwnerId,
-                        Date = commandTransaction.Date,
-                        Account = account,
-                        AccountId = account.Id,
-                        Amount = commandTransaction.Amount,
-                        Category = category,
-                        CategoryId = category.Id,
-                        AdditionalInfo = new TransactionAdditionalInfoEntity(){
-                            Payee = commandTransaction.Payee,
-                            Comment = commandTransaction.Comment
-                        },
-                        GroupKey = commandTransaction.GroupKey
-                    };
+            
+            _transactionMapper.Map(commandTransaction, transactionEntity);
+            transactionEntity.Account = account;
+            transactionEntity.Category = category;
 
-                    _dbContext.Transactions.Add(transactionEntity);
-                }
-            }
-
-            if(!commandTransaction.Deleted){
-                processedEntities.Add(transactionEntity);
-            }
+            processedEntities.Add(transactionEntity);
         }
 
         if(await _dbContext.SaveChangesAsync() <= 0){

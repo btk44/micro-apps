@@ -13,5 +13,5 @@ public class TransactionEntity: BaseEntity {
     // navigation props
     public AccountEntity Account { get; set; }
     public CategoryEntity Category { get; set; }
-    public TransactionAdditionalInfoEntity AdditionalInfo { get; set;}
+    public TransactionAdditionalInfoEntity AdditionalInfo { get; set; } = new TransactionAdditionalInfoEntity();
 }

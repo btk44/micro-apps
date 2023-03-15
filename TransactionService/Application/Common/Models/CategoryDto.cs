@@ -6,4 +6,5 @@ public class CategoryDto {
     public string Name { get; set; }
     public int ParentCategoryId { get; set; }
     public List<CategoryDto> SubCategories { get; set; }
+    public bool Deleted { get; set; }
 }
