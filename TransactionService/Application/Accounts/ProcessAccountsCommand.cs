@@ -34,8 +34,7 @@ public class ProcessAccountsCommandHandler : IRequestHandler<ProcessAccountsComm
             return new AccountValidationException($"Incorrect owner id in accounts: { incorrectAccountIds }");
         }
 
-        // check if currency exists
-
+        var currencyIdList = command.Accounts.Select(x => x.CurrencyId).Distinct();
         var accountIdList = command.Accounts.Where(x => x.Id > 0).Select(x => x.Id);
 
         var existingAccounts = await _dbContext.Accounts.Where(x => accountIdList.Contains(x.Id)).ToListAsync();
@@ -46,9 +45,17 @@ public class ProcessAccountsCommandHandler : IRequestHandler<ProcessAccountsComm
             return new AccountValidationException($"Missing accounts: { string.Join(", ", missingAccounts) }");
         }
 
+        var currencies = await _dbContext.Currencies.Where(x => currencyIdList.Contains(x.Id)).ToDictionaryAsync(x => x.Id);
+
         var processedEntities = new List<AccountEntity>();
 
         foreach(var commandAccount in command.Accounts){
+            CurrencyEntity currency;
+            
+            if(!currencies.TryGetValue(commandAccount.CurrencyId, out currency)){
+                return new AccountValidationException($"Currency does not exist (in account): { commandAccount.Id }");
+            }
+
             AccountEntity accountEntity = existingAccounts.FirstOrDefault(x => x.Id == commandAccount.Id);
             if(accountEntity == null){
                 accountEntity = new AccountEntity();

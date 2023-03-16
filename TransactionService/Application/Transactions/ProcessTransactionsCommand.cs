@@ -35,19 +35,17 @@ public class ProcessTransactionsCommandHandler: IRequestHandler<ProcessTransacti
         var categoryIdList = command.Transactions.Select(x => x.CategoryId).Distinct();
         var transactionIdList = command.Transactions.Where(x => x.Id > 0).Select(x => x.Id);
 
-        // check if currency exist and consider processing inactive
-
         var accounts = await _dbContext.Accounts
                                     .Include(x => x.AdditionalInfo)
-                                    .Where(x => x.Active && accountIdList.Contains(x.Id)) // to do: active? maybe not?
+                                    .Where(x => accountIdList.Contains(x.Id))
                                     .ToDictionaryAsync(x => x.Id);
 
         var categories = await _dbContext.Categories
-                                    .Where(x => x.Active && categoryIdList.Contains(x.Id))
+                                    .Where(x => categoryIdList.Contains(x.Id))
                                     .ToDictionaryAsync(x => x.Id);
 
         var existingTransactions = await _dbContext.Transactions
-                                    .Where(x => x.Active && transactionIdList.Contains(x.Id))
+                                    .Where(x => transactionIdList.Contains(x.Id))
                                     .ToListAsync();
 
         var existingTransactionIds = existingTransactions.Select(x => x.Id);
