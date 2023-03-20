@@ -26,28 +26,6 @@ public class ProcessCategoriesCommandHandler : IRequestHandler<ProcessCategories
 
     public async Task<Either<List<CategoryDto>, CategoryValidationException>> Handle(ProcessCategoriesCommand command, CancellationToken cancellationToken)
     {
-        List<int> incorrectCategoriesIdList = new List<int>();
-        CheckOwnerId(command.Categories, out incorrectCategoriesIdList);
-        if(incorrectCategoriesIdList.Any()){
-            return new CategoryValidationException($"Incorrect owner id in categories: { string.Join(", ", incorrectCategoriesIdList) }");
-        }
-
-        
-
         return new CategoryValidationException("No implementation yet");
-    }
-
-    private void CheckOwnerId(List<CategoryDto> categories, out List<int> incorrectCategoriesIdList){
-        incorrectCategoriesIdList = new List<int>();
-
-        foreach(var category in categories){
-            if(category.OwnerId <= 0){
-                incorrectCategoriesIdList.Add(category.Id);
-            }
-
-            if(category.SubCategories.Any()){
-                CheckOwnerId(category.SubCategories, out incorrectCategoriesIdList);
-            }
-        }
     }
 }
