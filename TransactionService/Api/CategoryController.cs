@@ -27,4 +27,16 @@ public class CategoryController : ApiControllerBase
         command.OwnerId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId));
         return await Mediator.Send(command);
     }
+
+    [HttpPost]
+    public async Task<ActionResult<List<CategoryDto>>> Create([FromBody] ProcessCategoriesCommand command)
+    {
+        // possible upgrade: unlock creating objects for other owners
+        command.ProcessingUserId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId));
+        var result = await Mediator.Send(command);
+        return result.Match<ActionResult>(
+            account => Ok(account),
+            exception => BadRequest(exception.Message)
+        );
+    } 
 }
