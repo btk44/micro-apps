@@ -16,7 +16,11 @@ public class SearchTransactionsCommand: IRequest<List<TransactionDto>> {
     public string Payee{ get; set; }
     public List<int> Categories { get; set; }
     public string Comment { get; set; }
-    public bool Removed { get; set; }
+    public bool Active { get; set; }
+    public bool ActiveDefined { get; set; }
+    public List<int> Accounts { get; set; }
+    public int Take { get; set; }
+    public int Offset { get; set; }
 }
 
 public class SearchTransactionsCommandHandler : IRequestHandler<SearchTransactionsCommand, List<TransactionDto>>
@@ -34,8 +38,7 @@ public class SearchTransactionsCommandHandler : IRequestHandler<SearchTransactio
     {
         var transactionQuery = _dbContext.Transactions
                 .Include(x => x.AdditionalInfo)
-                .Where(x => x.Active != command.Removed &&
-                            x.OwnerId == command.OwnerId && 
+                .Where(x => x.OwnerId == command.OwnerId && 
                             x.Amount >= command.AmountFrom && 
                             x.Amount <= command.AmountTo && 
                             x.Date  >= command.DateFrom &&
@@ -43,6 +46,10 @@ public class SearchTransactionsCommandHandler : IRequestHandler<SearchTransactio
 
         if( command.TransactionId > 0){
             transactionQuery = transactionQuery.Where(x => x.Id == command.TransactionId);
+        }
+
+        if(command.ActiveDefined){
+            transactionQuery = transactionQuery.Where(x => x.Active == command.Active);
         }
 
         if(!string.IsNullOrEmpty(command.Payee)){
@@ -55,6 +62,10 @@ public class SearchTransactionsCommandHandler : IRequestHandler<SearchTransactio
 
         if(command.Categories.Any()){
             transactionQuery = transactionQuery.Where(x => command.Categories.Contains(x.CategoryId));
+        }
+
+        if(command.Accounts.Any()){
+            transactionQuery = transactionQuery.Where(x => command.Accounts.Contains(x.AccountId));
         }
 
         return await transactionQuery.Select(x => _transactionMapper.Map<TransactionDto>(x)).ToListAsync();

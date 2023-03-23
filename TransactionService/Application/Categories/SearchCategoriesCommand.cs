@@ -11,7 +11,10 @@ public class SearchCategoriesCommand: IRequest<List<CategoryDto>> {
     public string Name { get; set; }
     public int Id { get; set; }
     public string CategoryGroupName { get; set; }
-    public bool Deleted { get; set; }
+    public bool Active { get; set; }
+    public bool ActiveDefined { get; set; }
+    public int Take { get; set; }
+    public int Offset { get; set; }
 }
 
 public class SearchCategoriesCommandHandler : IRequestHandler<SearchCategoriesCommand, List<CategoryDto>>
@@ -27,9 +30,11 @@ public class SearchCategoriesCommandHandler : IRequestHandler<SearchCategoriesCo
 
     public async Task<List<CategoryDto>> Handle(SearchCategoriesCommand command, CancellationToken cancellationToken)
     {
-        var categoryQuery = _dbContext.Categories
-                .Where(x => x.Active != command.Deleted &&
-                            x.OwnerId == command.OwnerId);
+        var categoryQuery = _dbContext.Categories.Where(x => x.OwnerId == command.OwnerId);
+
+        if(command.ActiveDefined){
+            categoryQuery = categoryQuery.Where(x => x.Active == command.Active);
+        }
 
         if(!string.IsNullOrEmpty(command.Name)){
             categoryQuery = categoryQuery.Where(x => x.Name.ToLower().Contains(command.Name.ToLower()));

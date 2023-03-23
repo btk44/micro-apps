@@ -13,7 +13,10 @@ public class SearchAccountsCommand: IRequest<List<AccountDto>> {
     public double AmountFrom { get; set; } 
     public double AmountTo { get; set; }
     public int Id { get; set; }
-    public bool Closed { get; set; }
+    public bool Active { get; set; }
+    public bool ActiveDefined { get; set; }
+    public int Take { get; set; }
+    public int Offset { get; set; }
 }
 
 public class SearchAccountsCommandHandler : IRequestHandler<SearchAccountsCommand, List<AccountDto>>
@@ -30,8 +33,14 @@ public class SearchAccountsCommandHandler : IRequestHandler<SearchAccountsComman
     public async Task<List<AccountDto>> Handle(SearchAccountsCommand command, CancellationToken cancellationToken)
     {
         var accountQuery = _dbContext.Accounts
-                                    .Where(x => x.Active != command.Closed &&
-                                                x.OwnerId == command.OwnerId);
+                .Include(x => x.AdditionalInfo)
+                .Where(x => x.OwnerId == command.OwnerId &&
+                            x.AdditionalInfo.Amount >= command.AmountFrom &&
+                            x.AdditionalInfo.Amount <= command.AmountTo);
+
+        if (command.ActiveDefined){
+            accountQuery = accountQuery.Where(x => command.Active == x.Active);
+        }
 
         if (command.Currencies.Any()){
             accountQuery = accountQuery.Where(x => command.Currencies.Contains(x.CurrencyId));
