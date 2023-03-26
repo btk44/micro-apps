@@ -6,5 +6,5 @@ public class AccountDto {
     public string Name { get; set; }
     public double Amount { get; set; }
     public int CurrencyId { get; set; }
-    public bool Deleted { get; set; }
+    public bool Active { get; set; }
 }
