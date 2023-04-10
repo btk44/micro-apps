@@ -11,4 +11,5 @@ public class AccountEntity: BaseEntity {
     public CurrencyEntity Currency { get; set; }
     public ICollection<TransactionEntity> Transactions { get; set; }
     public AccountAdditionalInfoEntity AdditionalInfo { get; set; }
+    public VisualPropertiesEntity VisualProperties { get; set; } = new VisualPropertiesEntity();
 }

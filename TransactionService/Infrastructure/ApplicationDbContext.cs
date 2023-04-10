@@ -20,8 +20,11 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext{
         Build(modelBuilder.Entity<CategoryEntity>());
         Build(modelBuilder.Entity<TransactionEntity>());
 
+        modelBuilder.Entity<CategoryEntity>().HasOne(x => x.VisualProperties);
+        modelBuilder.Entity<CurrencyEntity>().HasOne(x => x.VisualProperties);
         modelBuilder.Entity<AccountEntity>().HasMany(x => x.Transactions).WithOne(x => x.Account);        
         modelBuilder.Entity<AccountEntity>().HasOne(x => x.Currency);
+        modelBuilder.Entity<AccountEntity>().HasOne(x => x.VisualProperties);
         modelBuilder.Entity<AccountAdditionalInfoEntity>().HasOne(x => x.Account);
         modelBuilder.Entity<TransactionEntity>().HasOne(x => x.Account).WithMany(x => x.Transactions);
         modelBuilder.Entity<TransactionEntity>().HasOne(x => x.Category);

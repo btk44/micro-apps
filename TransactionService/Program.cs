@@ -4,11 +4,17 @@ using Swashbuckle.AspNetCore.Filters;
 using TransactionService.Application;
 using TransactionService.Infrastructure;
 
+var CorsOrigins = "CorsOriginsAllowed";
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
-builder.Configuration["Auth:ServerSigningPassword"] = DockerSecretReader.GetSecretOrEnvVar("private_key", builder.Configuration);
+//builder.Configuration["Auth:ServerSigningPassword"] = DockerSecretReader.GetSecretOrEnvVar("private_key", builder.Configuration);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(CorsOrigins, policy => { policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(); });
+});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -37,6 +43,7 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseRouting();
+app.UseCors(CorsOrigins);
 app.UseAuthorization();
 app.MapControllers();
 app.UseMiddleware<ErrorHandlerMiddleware>();

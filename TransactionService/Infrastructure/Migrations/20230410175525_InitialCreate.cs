@@ -10,6 +10,25 @@ namespace TransactionService.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "VisualPropertiesEntity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Color = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Icon = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<int>(type: "int", nullable: false),
+                    Modified = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: false),
+                    Active = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VisualPropertiesEntity", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Categories",
                 columns: table => new
                 {
@@ -18,6 +37,7 @@ namespace TransactionService.Infrastructure.Migrations
                     OwnerId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CategoryGroupName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VisualPropertiesId = table.Column<int>(type: "int", nullable: true),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
                     CreatedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
                     Modified = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
@@ -27,6 +47,11 @@ namespace TransactionService.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Categories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Categories_VisualPropertiesEntity_VisualPropertiesId",
+                        column: x => x.VisualPropertiesId,
+                        principalTable: "VisualPropertiesEntity",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -37,6 +62,7 @@ namespace TransactionService.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Code = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VisualPropertiesId = table.Column<int>(type: "int", nullable: false),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
                     CreatedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
                     Modified = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
@@ -46,6 +72,12 @@ namespace TransactionService.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Currencies", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Currencies_VisualPropertiesEntity_VisualPropertiesId",
+                        column: x => x.VisualPropertiesId,
+                        principalTable: "VisualPropertiesEntity",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -57,6 +89,7 @@ namespace TransactionService.Infrastructure.Migrations
                     OwnerId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CurrencyId = table.Column<int>(type: "int", nullable: false),
+                    VisualPropertiesId = table.Column<int>(type: "int", nullable: true),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
                     CreatedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
                     Modified = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
@@ -72,6 +105,11 @@ namespace TransactionService.Infrastructure.Migrations
                         principalTable: "Currencies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Accounts_VisualPropertiesEntity_VisualPropertiesId",
+                        column: x => x.VisualPropertiesId,
+                        principalTable: "VisualPropertiesEntity",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -172,6 +210,21 @@ namespace TransactionService.Infrastructure.Migrations
                 column: "CurrencyId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Accounts_VisualPropertiesId",
+                table: "Accounts",
+                column: "VisualPropertiesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categories_VisualPropertiesId",
+                table: "Categories",
+                column: "VisualPropertiesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Currencies_VisualPropertiesId",
+                table: "Currencies",
+                column: "VisualPropertiesId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TransactionAdditionalInfoEntity_TransactionId",
                 table: "TransactionAdditionalInfoEntity",
                 column: "TransactionId",
@@ -207,6 +260,9 @@ namespace TransactionService.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Currencies");
+
+            migrationBuilder.DropTable(
+                name: "VisualPropertiesEntity");
         }
     }
 }

@@ -141,9 +141,14 @@ namespace TransactionService.Infrastructure.Migrations
                     b.Property<int>("OwnerId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("VisualPropertiesId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CurrencyId");
+
+                    b.HasIndex("VisualPropertiesId");
 
                     b.ToTable("Accounts");
                 });
@@ -190,7 +195,12 @@ namespace TransactionService.Infrastructure.Migrations
                     b.Property<int>("OwnerId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("VisualPropertiesId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("VisualPropertiesId");
 
                     b.ToTable("Categories");
                 });
@@ -234,7 +244,12 @@ namespace TransactionService.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(-1);
 
+                    b.Property<int>("VisualPropertiesId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("VisualPropertiesId");
 
                     b.ToTable("Currencies");
                 });
@@ -299,6 +314,40 @@ namespace TransactionService.Infrastructure.Migrations
                     b.ToTable("Transactions");
                 });
 
+            modelBuilder.Entity("VisualPropertiesEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Color")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedBy")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Icon")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Modified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ModifiedBy")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("VisualPropertiesEntity");
+                });
+
             modelBuilder.Entity("AccountAdditionalInfoEntity", b =>
                 {
                     b.HasOne("TransactionService.Domain.Entities.AccountEntity", "Account")
@@ -329,7 +378,33 @@ namespace TransactionService.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("VisualPropertiesEntity", "VisualProperties")
+                        .WithMany()
+                        .HasForeignKey("VisualPropertiesId");
+
                     b.Navigation("Currency");
+
+                    b.Navigation("VisualProperties");
+                });
+
+            modelBuilder.Entity("TransactionService.Domain.Entities.CategoryEntity", b =>
+                {
+                    b.HasOne("VisualPropertiesEntity", "VisualProperties")
+                        .WithMany()
+                        .HasForeignKey("VisualPropertiesId");
+
+                    b.Navigation("VisualProperties");
+                });
+
+            modelBuilder.Entity("TransactionService.Domain.Entities.CurrencyEntity", b =>
+                {
+                    b.HasOne("VisualPropertiesEntity", "VisualProperties")
+                        .WithMany()
+                        .HasForeignKey("VisualPropertiesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("VisualProperties");
                 });
 
             modelBuilder.Entity("TransactionService.Domain.Entities.TransactionEntity", b =>
