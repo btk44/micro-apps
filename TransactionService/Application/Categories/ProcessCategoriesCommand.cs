@@ -11,6 +11,7 @@ namespace TransactionService.Application.Categories;
 
 public class ProcessCategoriesCommand: IRequest<Either<List<CategoryDto>, CategoryValidationException>> {
     public int ProcessingUserId { get; set; }
+    //public List<CategoryGroupDto> CategoryGroups { get; set; }
     public List<CategoryDto> Categories { get; set; }
 }
 

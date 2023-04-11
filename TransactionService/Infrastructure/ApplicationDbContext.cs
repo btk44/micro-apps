@@ -18,17 +18,14 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext{
         Build(modelBuilder.Entity<AccountEntity>());
         Build(modelBuilder.Entity<CurrencyEntity>());
         Build(modelBuilder.Entity<CategoryEntity>());
+        Build(modelBuilder.Entity<CategoryGroupEntity>());
         Build(modelBuilder.Entity<TransactionEntity>());
+        Build(modelBuilder.Entity<VisualPropertiesEntity>());
 
-        modelBuilder.Entity<CategoryEntity>().HasOne(x => x.VisualProperties);
-        modelBuilder.Entity<CurrencyEntity>().HasOne(x => x.VisualProperties);
+        modelBuilder.Entity<CategoryGroupEntity>().HasMany(x => x.Categories).WithOne(x => x.CategoryGroup);
         modelBuilder.Entity<AccountEntity>().HasMany(x => x.Transactions).WithOne(x => x.Account);        
         modelBuilder.Entity<AccountEntity>().HasOne(x => x.Currency);
-        modelBuilder.Entity<AccountEntity>().HasOne(x => x.VisualProperties);
-        modelBuilder.Entity<AccountAdditionalInfoEntity>().HasOne(x => x.Account);
-        modelBuilder.Entity<TransactionEntity>().HasOne(x => x.Account).WithMany(x => x.Transactions);
         modelBuilder.Entity<TransactionEntity>().HasOne(x => x.Category);
-        modelBuilder.Entity<TransactionAdditionalInfoEntity>().HasOne(x => x.Transaction);
     }    
 
     private void Build<T>(EntityTypeBuilder<T> entity) where T : BaseEntity

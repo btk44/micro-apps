@@ -36,7 +36,6 @@ public class ProcessTransactionsCommandHandler: IRequestHandler<ProcessTransacti
         var transactionIdList = command.Transactions.Where(x => x.Id > 0).Select(x => x.Id);
 
         var accounts = await _dbContext.Accounts
-                                    .Include(x => x.AdditionalInfo)
                                     .Where(x => accountIdList.Contains(x.Id))
                                     .ToDictionaryAsync(x => x.Id);
 

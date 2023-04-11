@@ -9,9 +9,10 @@ public class TransactionEntity: BaseEntity {
     public double Amount { get; set; }
     public int CategoryId { get; set; }
     public string GroupKey { get; set; }
+    public string Payee { get; set; }
+    public string Comment { get; set; }
 
     // navigation props
     public AccountEntity Account { get; set; }
     public CategoryEntity Category { get; set; }
-    public TransactionAdditionalInfoEntity AdditionalInfo { get; set; } = new TransactionAdditionalInfoEntity();
 }

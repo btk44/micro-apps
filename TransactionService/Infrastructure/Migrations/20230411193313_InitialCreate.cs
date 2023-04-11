@@ -10,18 +10,58 @@ namespace TransactionService.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "CategoryGroupEntity",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OwnerId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    CreatedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
+                    Modified = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
+                    Active = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CategoryGroupEntity", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Currencies",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    CreatedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
+                    Modified = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
+                    Active = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Currencies", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "VisualPropertiesEntity",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    ParentObjectName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ParentObjectId = table.Column<int>(type: "int", nullable: false),
                     Color = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Icon = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    Modified = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedBy = table.Column<int>(type: "int", nullable: false),
-                    Active = table.Column<bool>(type: "bit", nullable: false)
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    CreatedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
+                    Modified = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
+                    ModifiedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
+                    Active = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
                 },
                 constraints: table =>
                 {
@@ -36,8 +76,7 @@ namespace TransactionService.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OwnerId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CategoryGroupName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    VisualPropertiesId = table.Column<int>(type: "int", nullable: true),
+                    CategoryGroupId = table.Column<int>(type: "int", nullable: false),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
                     CreatedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
                     Modified = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
@@ -48,34 +87,9 @@ namespace TransactionService.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Categories", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Categories_VisualPropertiesEntity_VisualPropertiesId",
-                        column: x => x.VisualPropertiesId,
-                        principalTable: "VisualPropertiesEntity",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Currencies",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Code = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    VisualPropertiesId = table.Column<int>(type: "int", nullable: false),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
-                    Modified = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
-                    ModifiedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
-                    Active = table.Column<bool>(type: "bit", nullable: false, defaultValue: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Currencies", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Currencies_VisualPropertiesEntity_VisualPropertiesId",
-                        column: x => x.VisualPropertiesId,
-                        principalTable: "VisualPropertiesEntity",
+                        name: "FK_Categories_CategoryGroupEntity_CategoryGroupId",
+                        column: x => x.CategoryGroupId,
+                        principalTable: "CategoryGroupEntity",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -89,7 +103,7 @@ namespace TransactionService.Infrastructure.Migrations
                     OwnerId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CurrencyId = table.Column<int>(type: "int", nullable: false),
-                    VisualPropertiesId = table.Column<int>(type: "int", nullable: true),
+                    Amount = table.Column<double>(type: "float", nullable: false),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
                     CreatedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
                     Modified = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
@@ -103,36 +117,6 @@ namespace TransactionService.Infrastructure.Migrations
                         name: "FK_Accounts_Currencies_CurrencyId",
                         column: x => x.CurrencyId,
                         principalTable: "Currencies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Accounts_VisualPropertiesEntity_VisualPropertiesId",
-                        column: x => x.VisualPropertiesId,
-                        principalTable: "VisualPropertiesEntity",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AccountAdditionalInfoEntity",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Amount = table.Column<double>(type: "float", nullable: false),
-                    AccountId = table.Column<int>(type: "int", nullable: false),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    Modified = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedBy = table.Column<int>(type: "int", nullable: false),
-                    Active = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AccountAdditionalInfoEntity", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AccountAdditionalInfoEntity_Accounts_AccountId",
-                        column: x => x.AccountId,
-                        principalTable: "Accounts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -149,6 +133,8 @@ namespace TransactionService.Infrastructure.Migrations
                     Amount = table.Column<double>(type: "float", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     GroupKey = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Payee = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
                     CreatedBy = table.Column<int>(type: "int", nullable: false, defaultValue: -1),
                     Modified = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
@@ -172,63 +158,15 @@ namespace TransactionService.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "TransactionAdditionalInfoEntity",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Payee = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TransactionId = table.Column<int>(type: "int", nullable: false),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false),
-                    Modified = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ModifiedBy = table.Column<int>(type: "int", nullable: false),
-                    Active = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TransactionAdditionalInfoEntity", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TransactionAdditionalInfoEntity_Transactions_TransactionId",
-                        column: x => x.TransactionId,
-                        principalTable: "Transactions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AccountAdditionalInfoEntity_AccountId",
-                table: "AccountAdditionalInfoEntity",
-                column: "AccountId",
-                unique: true);
-
             migrationBuilder.CreateIndex(
                 name: "IX_Accounts_CurrencyId",
                 table: "Accounts",
                 column: "CurrencyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Accounts_VisualPropertiesId",
-                table: "Accounts",
-                column: "VisualPropertiesId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Categories_VisualPropertiesId",
+                name: "IX_Categories_CategoryGroupId",
                 table: "Categories",
-                column: "VisualPropertiesId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Currencies_VisualPropertiesId",
-                table: "Currencies",
-                column: "VisualPropertiesId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TransactionAdditionalInfoEntity_TransactionId",
-                table: "TransactionAdditionalInfoEntity",
-                column: "TransactionId",
-                unique: true);
+                column: "CategoryGroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Transactions_AccountId",
@@ -244,13 +182,10 @@ namespace TransactionService.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AccountAdditionalInfoEntity");
-
-            migrationBuilder.DropTable(
-                name: "TransactionAdditionalInfoEntity");
-
-            migrationBuilder.DropTable(
                 name: "Transactions");
+
+            migrationBuilder.DropTable(
+                name: "VisualPropertiesEntity");
 
             migrationBuilder.DropTable(
                 name: "Accounts");
@@ -262,7 +197,7 @@ namespace TransactionService.Infrastructure.Migrations
                 name: "Currencies");
 
             migrationBuilder.DropTable(
-                name: "VisualPropertiesEntity");
+                name: "CategoryGroupEntity");
         }
     }
 }

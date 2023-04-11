@@ -33,10 +33,9 @@ public class SearchAccountsCommandHandler : IRequestHandler<SearchAccountsComman
     public async Task<List<AccountDto>> Handle(SearchAccountsCommand command, CancellationToken cancellationToken)
     {
         var accountQuery = _dbContext.Accounts
-                .Include(x => x.AdditionalInfo)
                 .Where(x => x.OwnerId == command.OwnerId &&
-                            x.AdditionalInfo.Amount >= command.AmountFrom &&
-                            x.AdditionalInfo.Amount <= command.AmountTo);
+                            x.Amount >= command.AmountFrom &&
+                            x.Amount <= command.AmountTo);
 
         if (command.ActiveDefined){
             accountQuery = accountQuery.Where(x => command.Active == x.Active);

@@ -30,7 +30,9 @@ public class SearchCategoriesCommandHandler : IRequestHandler<SearchCategoriesCo
 
     public async Task<List<CategoryDto>> Handle(SearchCategoriesCommand command, CancellationToken cancellationToken)
     {
-        var categoryQuery = _dbContext.Categories.Where(x => x.OwnerId == command.OwnerId);
+        var categoryQuery = _dbContext.Categories
+                                .Include(x => x.CategoryGroup)
+                                .Where(x => x.OwnerId == command.OwnerId);
 
         if(command.ActiveDefined){
             categoryQuery = categoryQuery.Where(x => x.Active == command.Active);
@@ -46,7 +48,7 @@ public class SearchCategoriesCommandHandler : IRequestHandler<SearchCategoriesCo
 
         if(string.IsNullOrEmpty(command.CategoryGroupName)){
             categoryQuery = categoryQuery
-                    .Where(x => x.CategoryGroupName.ToLower().Contains(command.CategoryGroupName.ToLower()));
+                    .Where(x => x.CategoryGroup.Name.ToLower().Contains(command.CategoryGroupName.ToLower()));
         }
 
         return await categoryQuery.Select(x => _categoryMapper.Map<CategoryDto>(x)).ToListAsync();
