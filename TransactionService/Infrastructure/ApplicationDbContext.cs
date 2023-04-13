@@ -10,6 +10,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext{
     public DbSet<AccountEntity> Accounts { get; set;} 
     public DbSet<CurrencyEntity> Currencies { get; set; }
     public DbSet<CategoryEntity> Categories { get; set; }
+    public DbSet<CategoryGroupEntity> CategoryGroups { get; set; }
     public DbSet<TransactionEntity> Transactions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) { 

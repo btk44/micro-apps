@@ -7,6 +7,7 @@ public interface IApplicationDbContext{
     public DbSet<AccountEntity> Accounts { get; } 
     public DbSet<TransactionEntity> Transactions { get; }
     public DbSet<CategoryEntity> Categories { get; }
+    public DbSet<CategoryGroupEntity> CategoryGroups { get; }
     public DbSet<CurrencyEntity> Currencies { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

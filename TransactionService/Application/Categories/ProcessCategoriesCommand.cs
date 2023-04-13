@@ -9,13 +9,12 @@ using TransactionService.Domain.Entities;
 
 namespace TransactionService.Application.Categories;
 
-public class ProcessCategoriesCommand: IRequest<Either<List<CategoryDto>, CategoryValidationException>> {
+public class ProcessCategoriesCommand: IRequest<Either<List<CategoryGroupDto>, CategoryValidationException>> {
     public int ProcessingUserId { get; set; }
-    //public List<CategoryGroupDto> CategoryGroups { get; set; }
-    public List<CategoryDto> Categories { get; set; }
+    public List<CategoryGroupDto> CategoryGroups { get; set; }
 }
 
-public class ProcessCategoriesCommandHandler : IRequestHandler<ProcessCategoriesCommand, Either<List<CategoryDto>, CategoryValidationException>>
+public class ProcessCategoriesCommandHandler : IRequestHandler<ProcessCategoriesCommand, Either<List<CategoryGroupDto>, CategoryValidationException>>
 {
     private IApplicationDbContext _dbContext;
     private CategoryValidator _categoryValidator;
@@ -27,39 +26,90 @@ public class ProcessCategoriesCommandHandler : IRequestHandler<ProcessCategories
         _categoryMapper = categoryMapper;
     }
 
-    public async Task<Either<List<CategoryDto>, CategoryValidationException>> Handle(ProcessCategoriesCommand command, CancellationToken cancellationToken)
+//fix this!
+    public async Task<Either<List<CategoryGroupDto>, CategoryValidationException>> Handle(ProcessCategoriesCommand command, CancellationToken cancellationToken)
     {
-        if(command.Categories.Any(x => x.OwnerId <= 0)){
-            var incorrectCategoriesIds = string.Join(", ", command.Categories.Where(x => x.OwnerId <= 0).Select(x => x.Id));
-            return new CategoryValidationException($"Incorrect owner id in accounts: { incorrectCategoriesIds }");
+        if (command.CategoryGroups.Any(x => x.OwnerId <= 0)){
+            var incorrectCategoryGroupIds = string.Join(", ", command.CategoryGroups.Where(x => x.OwnerId <= 0).Select(x => x.Id));
+            return new CategoryValidationException($"Incorrect owner id in category groups: { incorrectCategoryGroupIds }");
         }
 
-        var categoryIdList = command.Categories.Where(x => x.Id > 0).Select(x => x.Id);
+        foreach(var categoryGroup in command.CategoryGroups){
+            if(categoryGroup.Categories.Any(x => x.OwnerId != categoryGroup.OwnerId)){
+                var incorrectCategoriesIds = string.Join(", ", categoryGroup.Categories.Where(x => x.OwnerId != categoryGroup.OwnerId).Select(x => x.Id));
+                return new CategoryValidationException($"Incorrect owner id in categories: { incorrectCategoriesIds }");
+            }
+        }
+
+        var categoryGroupsIdList = command.CategoryGroups.Where(x => x.Id > 0).Select(x => x.Id);
+        var existingCategoryGroups = await _dbContext.CategoryGroups
+                                                .Include(x => x.Categories)
+                                                .Where(x => categoryGroupsIdList.Contains(x.Id))
+                                                .ToListAsync();
+        var existingGroupIds = existingCategoryGroups.Select(x => x.Id);
+        var missingGroups = categoryGroupsIdList.Except(existingGroupIds);
+
+        if(missingGroups.Any()){
+            return new CategoryValidationException($"Missing category groups: { string.Join(", ", missingGroups) }");
+        }
+
+        var categoryIdList = command.CategoryGroups.SelectMany(x => x.Categories).Where(x => x.Id > 0).Select(x => x.Id);
         var existingCategories = await _dbContext.Categories.Where(x => categoryIdList.Contains(x.Id)).ToListAsync();
         var existingIds = existingCategories.Select(x => x.Id);
         var missingCategories = categoryIdList.Except(existingIds);
 
         if(missingCategories.Any()){
-            return new CategoryValidationException($"Missing accounts: { string.Join(", ", missingCategories) }");
+            return new CategoryValidationException($"Missing categories: { string.Join(", ", missingCategories) }");
         }
 
-        var processedEntities = new List<CategoryEntity>();
+        var processedGroupEntities = new List<CategoryGroupEntity>();
 
-        foreach(var commandCategory in command.Categories){
-            CategoryEntity categoryEntity = existingCategories.FirstOrDefault(x => x.Id == commandCategory.Id);
-            if(categoryEntity == null){
-                categoryEntity = new CategoryEntity();
-                _dbContext.Categories.Add(categoryEntity);
+        foreach(var commandCategoryGroup in command.CategoryGroups){
+            CategoryGroupEntity categoryGroupEntity = existingCategoryGroups.FirstOrDefault(x => x.Id == commandCategoryGroup.Id);
+            if (categoryGroupEntity == null){
+                categoryGroupEntity = new CategoryGroupEntity();
+                _dbContext.CategoryGroups.Add( categoryGroupEntity);
             }
 
-            _categoryMapper.Map(commandCategory, categoryEntity);
-            processedEntities.Add(categoryEntity);
+            _categoryMapper.Map(commandCategoryGroup, categoryGroupEntity);
+            processedGroupEntities.Add(categoryGroupEntity);
+
+            foreach(var commandCategory in commandCategoryGroup.Categories){
+                CategoryEntity categoryEntity = existingCategories.FirstOrDefault(x => x.Id == commandCategory.Id);
+                if(categoryEntity == null){
+                    categoryEntity = new CategoryEntity();
+                    _dbContext.Categories.Add(categoryEntity);  // what if group is new and child is old? how to remove it from previous group
+                }
+
+                _categoryMapper.Map(commandCategory, categoryEntity);
+                categoryGroupEntity.Categories.Add(categoryEntity);
+            }
         }
 
         if(await _dbContext.SaveChangesAsync() <= 0){
             return new CategoryValidationException("Save error - please try again");
         }
 
-        return processedEntities.Select(x => _categoryMapper.Map<CategoryDto>(x)).ToList();
+        var resultCategoryGroups = new List<CategoryGroupDto>();
+        foreach(var processedCategoryGroup in processedGroupEntities){
+            var categoryGroupDto = _categoryMapper.Map<CategoryGroupDto>(processedCategoryGroup);
+            foreach(var category in processedCategoryGroup.Categories){
+                categoryGroupDto.Categories.Add(_categoryMapper.Map<CategoryDto>(category));
+            }
+            resultCategoryGroups.Add(categoryGroupDto);
+        }
+
+        return resultCategoryGroups;
+    }
+
+    private Either<List<CategoryDto>, CategoryValidationException> ProcessCategoryGroups(ProcessCategoriesCommand command){
+        if (command.CategoryGroups.Any(x => x.OwnerId <= 0)){
+            var incorrectCategoryGroupIds = string.Join(", ", command.CategoryGroups.Where(x => x.OwnerId <= 0).Select(x => x.Id));
+            return new CategoryValidationException($"Incorrect owner id in category groups: { incorrectCategoryGroupIds }");
+        }
+
+
+
+        return new List<CategoryDto>();
     }
 }
