@@ -62,6 +62,12 @@ public class ProcessCategoriesCommandHandler : IRequestHandler<ProcessCategories
             return new CategoryValidationException($"Missing categories: { string.Join(", ", missingCategories) }");
         }
 
+        var existingCategoriesToDeletIds = command.CategoryGroups.SelectMany(x => x.Categories.Where(y => !y.Active)).Select(x => x.Id);
+        var thereAreTransactionsForDeletedCategory = await _dbContext.Transactions.AnyAsync(x => existingCategoriesToDeletIds.Contains(x.CategoryId) && x.Active);
+        if(thereAreTransactionsForDeletedCategory){
+            return new CategoryValidationException($"There are active transactions for one or more of these categories: { string.Join(", ", existingCategoriesToDeletIds) }");
+        }
+
         var processedGroupEntities = new List<CategoryGroupEntity>();
 
         foreach(var commandCategoryGroup in command.CategoryGroups){
