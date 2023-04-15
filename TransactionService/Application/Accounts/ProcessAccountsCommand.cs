@@ -45,6 +45,12 @@ public class ProcessAccountsCommandHandler : IRequestHandler<ProcessAccountsComm
             return new AccountValidationException($"Missing accounts: { string.Join(", ", missingAccounts) }");
         }
 
+        var existingAccountsToDeleteIds = command.Accounts.Where(x => !x.Active).Select(x => x.Id);
+        var thereAreTransactionsForDeletedAccount = await _dbContext.Transactions.AnyAsync(x => existingAccountsToDeleteIds.Contains(x.AccountId) && x.Active);
+        if(thereAreTransactionsForDeletedAccount){
+            return new AccountValidationException($"There are active transactions for one or more of these accounts: { string.Join(", ", existingAccountsToDeleteIds) }");
+        }
+
         var currencies = await _dbContext.Currencies.Where(x => currencyIdList.Contains(x.Id)).ToDictionaryAsync(x => x.Id);
 
         var processedEntities = new List<AccountEntity>();

@@ -26,7 +26,6 @@ public class ProcessCategoriesCommandHandler : IRequestHandler<ProcessCategories
         _categoryMapper = categoryMapper;
     }
 
-//fix this!
     public async Task<Either<List<CategoryGroupDto>, CategoryValidationException>> Handle(ProcessCategoriesCommand command, CancellationToken cancellationToken)
     {
         if (command.CategoryGroups.Any(x => x.OwnerId <= 0)){
@@ -62,10 +61,10 @@ public class ProcessCategoriesCommandHandler : IRequestHandler<ProcessCategories
             return new CategoryValidationException($"Missing categories: { string.Join(", ", missingCategories) }");
         }
 
-        var existingCategoriesToDeletIds = command.CategoryGroups.SelectMany(x => x.Categories.Where(y => !y.Active)).Select(x => x.Id);
-        var thereAreTransactionsForDeletedCategory = await _dbContext.Transactions.AnyAsync(x => existingCategoriesToDeletIds.Contains(x.CategoryId) && x.Active);
+        var existingCategoriesToDeleteIds = command.CategoryGroups.SelectMany(x => x.Categories.Where(y => !y.Active)).Select(x => x.Id);
+        var thereAreTransactionsForDeletedCategory = await _dbContext.Transactions.AnyAsync(x => existingCategoriesToDeleteIds.Contains(x.CategoryId) && x.Active);
         if(thereAreTransactionsForDeletedCategory){
-            return new CategoryValidationException($"There are active transactions for one or more of these categories: { string.Join(", ", existingCategoriesToDeletIds) }");
+            return new CategoryValidationException($"There are active transactions for one or more of these categories: { string.Join(", ", existingCategoriesToDeleteIds) }");
         }
 
         var processedGroupEntities = new List<CategoryGroupEntity>();
@@ -106,16 +105,5 @@ public class ProcessCategoriesCommandHandler : IRequestHandler<ProcessCategories
         }
 
         return resultCategoryGroups;
-    }
-
-    private Either<List<CategoryDto>, CategoryValidationException> ProcessCategoryGroups(ProcessCategoriesCommand command){
-        if (command.CategoryGroups.Any(x => x.OwnerId <= 0)){
-            var incorrectCategoryGroupIds = string.Join(", ", command.CategoryGroups.Where(x => x.OwnerId <= 0).Select(x => x.Id));
-            return new CategoryValidationException($"Incorrect owner id in category groups: { incorrectCategoryGroupIds }");
-        }
-
-
-
-        return new List<CategoryDto>();
     }
 }

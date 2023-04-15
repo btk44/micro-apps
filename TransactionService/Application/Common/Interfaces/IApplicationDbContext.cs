@@ -9,5 +9,6 @@ public interface IApplicationDbContext{
     public DbSet<CategoryEntity> Categories { get; }
     public DbSet<CategoryGroupEntity> CategoryGroups { get; }
     public DbSet<CurrencyEntity> Currencies { get; }
+    DbSet<VisualPropertiesEntity> VisualProperties { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

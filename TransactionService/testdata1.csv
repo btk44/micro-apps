@@ -1,0 +1,4 @@
+﻿date,account id,account name,amount,payee,cat id,cat name,sub cat id ,sub cat name,comment
+04/12/23,2,mBank,290,Mariusz,2,food,4,other,some food
+04/01/23,2,Millenium,-390,Mariusz,2,food,7,other,some stuff
+04/11/23,2,mBank,-90,Mariusz,2,food,4,other,some food

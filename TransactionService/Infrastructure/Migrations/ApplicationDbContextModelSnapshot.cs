@@ -71,7 +71,7 @@ namespace TransactionService.Infrastructure.Migrations
 
                     b.HasIndex("CurrencyId");
 
-                    b.ToTable("Accounts");
+                    b.ToTable("Account", (string)null);
                 });
 
             modelBuilder.Entity("TransactionService.Domain.Entities.CategoryEntity", b =>
@@ -120,7 +120,7 @@ namespace TransactionService.Infrastructure.Migrations
 
                     b.HasIndex("CategoryGroupId");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Category", (string)null);
                 });
 
             modelBuilder.Entity("TransactionService.Domain.Entities.CategoryGroupEntity", b =>
@@ -164,7 +164,7 @@ namespace TransactionService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CategoryGroupEntity");
+                    b.ToTable("CategoryGroup", (string)null);
                 });
 
             modelBuilder.Entity("TransactionService.Domain.Entities.CurrencyEntity", b =>
@@ -208,7 +208,7 @@ namespace TransactionService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Currencies");
+                    b.ToTable("Currency", (string)null);
                 });
 
             modelBuilder.Entity("TransactionService.Domain.Entities.TransactionEntity", b =>
@@ -274,7 +274,7 @@ namespace TransactionService.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Transactions");
+                    b.ToTable("Transaction", (string)null);
                 });
 
             modelBuilder.Entity("VisualPropertiesEntity", b =>
@@ -324,7 +324,7 @@ namespace TransactionService.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("VisualPropertiesEntity");
+                    b.ToTable("VisualProperty", (string)null);
                 });
 
             modelBuilder.Entity("TransactionService.Domain.Entities.AccountEntity", b =>

@@ -12,9 +12,17 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext{
     public DbSet<CategoryEntity> Categories { get; set; }
     public DbSet<CategoryGroupEntity> CategoryGroups { get; set; }
     public DbSet<TransactionEntity> Transactions { get; set; }
+    public DbSet<VisualPropertiesEntity> VisualProperties { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder) { 
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<AccountEntity>().ToTable("Account"); 
+        modelBuilder.Entity<CurrencyEntity>().ToTable("Currency"); 
+        modelBuilder.Entity<CategoryEntity>().ToTable("Category"); 
+        modelBuilder.Entity<CategoryGroupEntity>().ToTable("CategoryGroup"); 
+        modelBuilder.Entity<TransactionEntity>().ToTable("Transaction"); 
+        modelBuilder.Entity<VisualPropertiesEntity>().ToTable("VisualProperty"); 
 
         Build(modelBuilder.Entity<AccountEntity>());
         Build(modelBuilder.Entity<CurrencyEntity>());

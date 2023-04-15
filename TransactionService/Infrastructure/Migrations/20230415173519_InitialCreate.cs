@@ -10,7 +10,7 @@ namespace TransactionService.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "CategoryGroupEntity",
+                name: "CategoryGroup",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -25,11 +25,11 @@ namespace TransactionService.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CategoryGroupEntity", x => x.Id);
+                    table.PrimaryKey("PK_CategoryGroup", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Currencies",
+                name: "Currency",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -44,11 +44,11 @@ namespace TransactionService.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Currencies", x => x.Id);
+                    table.PrimaryKey("PK_Currency", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "VisualPropertiesEntity",
+                name: "VisualProperty",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -65,11 +65,11 @@ namespace TransactionService.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_VisualPropertiesEntity", x => x.Id);
+                    table.PrimaryKey("PK_VisualProperty", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Categories",
+                name: "Category",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -85,17 +85,17 @@ namespace TransactionService.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Categories", x => x.Id);
+                    table.PrimaryKey("PK_Category", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Categories_CategoryGroupEntity_CategoryGroupId",
+                        name: "FK_Category_CategoryGroup_CategoryGroupId",
                         column: x => x.CategoryGroupId,
-                        principalTable: "CategoryGroupEntity",
+                        principalTable: "CategoryGroup",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Accounts",
+                name: "Account",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -112,17 +112,17 @@ namespace TransactionService.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Accounts", x => x.Id);
+                    table.PrimaryKey("PK_Account", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Accounts_Currencies_CurrencyId",
+                        name: "FK_Account_Currency_CurrencyId",
                         column: x => x.CurrencyId,
-                        principalTable: "Currencies",
+                        principalTable: "Currency",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Transactions",
+                name: "Transaction",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -143,61 +143,61 @@ namespace TransactionService.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Transactions", x => x.Id);
+                    table.PrimaryKey("PK_Transaction", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Transactions_Accounts_AccountId",
+                        name: "FK_Transaction_Account_AccountId",
                         column: x => x.AccountId,
-                        principalTable: "Accounts",
+                        principalTable: "Account",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Transactions_Categories_CategoryId",
+                        name: "FK_Transaction_Category_CategoryId",
                         column: x => x.CategoryId,
-                        principalTable: "Categories",
+                        principalTable: "Category",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Accounts_CurrencyId",
-                table: "Accounts",
+                name: "IX_Account_CurrencyId",
+                table: "Account",
                 column: "CurrencyId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Categories_CategoryGroupId",
-                table: "Categories",
+                name: "IX_Category_CategoryGroupId",
+                table: "Category",
                 column: "CategoryGroupId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transactions_AccountId",
-                table: "Transactions",
+                name: "IX_Transaction_AccountId",
+                table: "Transaction",
                 column: "AccountId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Transactions_CategoryId",
-                table: "Transactions",
+                name: "IX_Transaction_CategoryId",
+                table: "Transaction",
                 column: "CategoryId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Transactions");
+                name: "Transaction");
 
             migrationBuilder.DropTable(
-                name: "VisualPropertiesEntity");
+                name: "VisualProperty");
 
             migrationBuilder.DropTable(
-                name: "Accounts");
+                name: "Account");
 
             migrationBuilder.DropTable(
-                name: "Categories");
+                name: "Category");
 
             migrationBuilder.DropTable(
-                name: "Currencies");
+                name: "Currency");
 
             migrationBuilder.DropTable(
-                name: "CategoryGroupEntity");
+                name: "CategoryGroup");
         }
     }
 }
