@@ -9,7 +9,7 @@ namespace TransactionService.Application.Transactions;
 public class SearchTransactionsCommand: IRequest<List<TransactionDto>> {
     public DateTime DateFrom { get; set; }
     public DateTime DateTo { get; set; }
-    public int TransactionId { get; set; }
+    public int Id { get; set; }
     public int OwnerId { get; set; }
     public double AmountFrom { get; set; } 
     public double AmountTo { get; set; }
@@ -43,8 +43,8 @@ public class SearchTransactionsCommandHandler : IRequestHandler<SearchTransactio
                             x.Date  >= command.DateFrom &&
                             x.Date <= command.DateTo);
 
-        if( command.TransactionId > 0){
-            transactionQuery = transactionQuery.Where(x => x.Id == command.TransactionId);
+        if( command.Id > 0){
+            transactionQuery = transactionQuery.Where(x => x.Id == command.Id);
         }
 
         if(command.ActiveDefined){

@@ -94,7 +94,7 @@ public class Importer {
         foreach(var account in accounts){
             var accountEntity = account.Value;
             accountEntity.Amount = await _dbContext.Transactions.Where(x => x.AccountId == accountEntity.Id).SumAsync(x => x.Amount);
-            if (!visualproperties.Any(x => x.ParentObjectId == accountEntity.Id && x.ParentObjectName == nameof(accountEntity))){
+            if (!visualproperties.Any(x => x.ParentObjectId == accountEntity.Id && x.ParentObjectName == "Account")){
                 await _dbContext.VisualProperties.AddAsync(new VisualPropertiesEntity(){
                     ParentObjectId = accountEntity.Id,
                     ParentObjectName = nameof(accountEntity)
@@ -104,7 +104,7 @@ public class Importer {
 
         foreach(var category in categories){
             var categoryEntity = category.Value;
-            if (!visualproperties.Any(x => x.ParentObjectId == categoryEntity.Id && x.ParentObjectName == nameof(categoryEntity))){
+            if (!visualproperties.Any(x => x.ParentObjectId == categoryEntity.Id && x.ParentObjectName == "Category")){
                 await _dbContext.VisualProperties.AddAsync(new VisualPropertiesEntity(){
                     ParentObjectId = categoryEntity.Id,
                     ParentObjectName = nameof(categoryEntity)

@@ -7,7 +7,7 @@ using Shared.Api;
 
 namespace TransactionService.Api;
 
-[Authorize]
+//[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class AccountController : ApiControllerBase
@@ -24,7 +24,7 @@ public class AccountController : ApiControllerBase
     [HttpPost("search")]
     public async Task<ActionResult<List<AccountDto>>> Search([FromBody] SearchAccountsCommand command){
         // possible upgrade: unlock searching objects for other owners
-        command.OwnerId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId));
+        // command.OwnerId = Convert.ToInt32(GetClaimFromToken(User, Claims.AccountId));
         return await Mediator.Send(command);
     }
 
